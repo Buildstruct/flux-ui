@@ -40,6 +40,7 @@ local function RecursiveInclude(path, callback)
     for k, v in pairs(Directories) do RecursiveInclude(path.."/"..v, callback) end
 end
 
+SharedInclude("flux/config.lua")
 ServerInclude("flux/server.lua")
 SharedInclude("flux/utility.lua")
 RecursiveInclude("flux/core", ClientInclude)

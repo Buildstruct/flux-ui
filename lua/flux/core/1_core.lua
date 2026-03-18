@@ -11,13 +11,6 @@ Flux.Materials = {
 Flux.DrawColor = {r = 255, g = 255, b = 255, a = 255}
 Flux.OutlineDrawColor = {r = 0, g = 0, b = 0, a = 255}
 
-Flux.ActiveElements = {}
-Flux.Elements = {}
-
-Flux.Derma = {}
-
-Flux.IsLinux = system.IsLinux()
-
 function Flux.ResetColor() Flux.RGB(255, 255, 255) end
 function Flux.Color(ColorObject, ForceAlpha)
     if not ColorObject.r and not ColorObject.g and not ColorObject.b then return Flux.Warn("Attempted to call Flux.Color with a non color object. The ActiveColor was not changed.") end
@@ -55,15 +48,6 @@ function Flux.RGBOutline(R, G, B, A)
     surface.SetTextColor(Flux.OutlineDrawColor.r, Flux.OutlineDrawColor.g, Flux.OutlineDrawColor.b, Flux.OutlineDrawColor.a)
     surface.SetDrawColor(Flux.OutlineDrawColor.r, Flux.OutlineDrawColor.g, Flux.OutlineDrawColor.b, Flux.OutlineDrawColor.a)
 end
-
--- Screen Resolution
-Flux.ScrW = ScrW()
-Flux.ScrH = ScrH()
-hook.Add("OnScreenSizeChanged", "FluxScreenResolution", function() 
-    Flux.ScrW = ScrW()
-    Flux.ScrH = ScrH()
-    Flux.Print("Screen resolution was changed, updated ScrW and ScrH values: " .. Flux.ScrW .. "x" .. Flux.ScrH)
-end)
 
 -- Debug Interface
 if Flux.Debug then
