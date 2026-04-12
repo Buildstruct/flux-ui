@@ -5,10 +5,12 @@ function Derma.Button(parent, callback, ...)
     FluxButton.OutlineColor = Flux.Colors.ButtonOutline
     FluxButton.Content = {...}
     FluxButton.ContentPadding = 14
+    FluxButton.DoLayout = true
     FluxButton.Font = "DebugOverlay"
     FluxButton:SetText("")
 
     function FluxButton:DoClick() callback(self) end
+    function FluxButton:SetAutoLayout(value) self.DoLayout = value return self end
     function FluxButton:SetContentPadding(value) self.ContentPadding = value return self end
     function FluxButton:SetColor(value) self.Color = value return self end
     function FluxButton:SetFont(value) self.Font = value return self end
@@ -23,8 +25,11 @@ function Derma.Button(parent, callback, ...)
     function FluxButton:PerformLayout()
         surface.SetFont(self.Font)
         local TextW, TextH = Flux.Text.GetTextSize(unpack(self.Content))
-        self:SetWide(TextW + self.ContentPadding + (self.Icon and self:GetTall()-8 + 4 or 0))
+        if self.DoLayout then 
+            self:SetWide(TextW + self.ContentPadding + (self.Icon and self:GetTall()-12 + 8 or 0))
+        end
         self.TextH = TextH
+        self.TextW = TextW
     end
 
     function FluxButton:Paint(w, h)
@@ -39,12 +44,17 @@ function Derma.Button(parent, callback, ...)
 
         Flux.RGB(255, 255, 255, ButtonHovered and 255 or 190)
         surface.SetFont(self.Font)
-        Flux.Text.Left((self.ContentPadding/2) + (self.Icon and h-8 + 4 or 0), (h/2) - self.TextH/2, unpack(self.Content))
-
+        Flux.Text.Center((w/2) + (self.Icon and (h-12)/2 + 3 or 0), (h/2) - self.TextH/2, unpack(self.Content))
         if self.Icon then
             surface.SetDrawColor(255, 255, 255, ButtonHovered and 245 or 190)
             surface.SetMaterial(self.Icon)
-            surface.DrawTexturedRect(6, h/2 - (h-8)/2, h - 8, h - 8)
+            
+            local OnlyIcon = self.Content and self.Content[1] == "" and not self.Content[2]
+            if OnlyIcon then
+                surface.DrawTexturedRect(w/2 - (h-12)/2, h/2 - (h-12)/2, h - 12, h - 12)
+            else
+                surface.DrawTexturedRect(w/2 - self.TextW/2 - (h-12)/2 - 3, h/2 - (h-12)/2, h - 12, h - 12)
+            end
         end
     end
 

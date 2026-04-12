@@ -7,7 +7,9 @@ Flux.Config = {
     Fonts = {
         Linux = "DejaVu Sans Mono",
         Windows = "Consolas"
-    }
-
-
+    },
+    
+    MemoryClearInterval = 0.25, -- How many seconds to run the memory checker (1s default)
+    MemoryDeleteTime = 0.333, -- How many seconds before a cached value is deleted without being touched?
+    MemoryModificationDelay = 0.333, -- How many seconds before we can look to see if a value is modified?
 }

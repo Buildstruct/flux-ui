@@ -30,4 +30,5 @@ function Flux.Blur.Section(x, y, w, h, size, passes, alpha)
             surface.DrawTexturedRect(0, 0, Flux.ScrW, Flux.ScrH)
         end
     render.SetScissorRect(0, 0, 0, 0, false) 
+    surface.SetDrawColor(Flux.DrawColor)
 end

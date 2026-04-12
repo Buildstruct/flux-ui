@@ -1,8 +1,8 @@
 local Flux = {Debug = true}
 _G.Flux = Flux
 Flux.StartTick = SysTime()
-Flux.Prefix = "flux"
-Flux.Version = "0.5.0-baseline_development"
+Flux.Prefix = "flux-ui"
+Flux.Version = "0.6.0"
 
 Flux.Colors = {
     Accent = Color(43, 85, 245),
@@ -48,3 +48,8 @@ RecursiveInclude("flux/elements", ClientInclude)
 
 Flux.Initalized = true
 Flux.Print("Ready in " .. math.Round(SysTime() - Flux.StartTick, 2) .. " seconds.")
+
+hook.Add("HUDPaint", "flux", function()
+    Flux.Text.Outline(Flux.Text.Left, 150, 32, 1, string.rep([[a]],7))
+
+end)

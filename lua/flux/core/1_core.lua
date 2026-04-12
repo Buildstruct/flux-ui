@@ -53,6 +53,12 @@ end
 if Flux.Debug then
     local CachedMaterials = table.Count(Flux.Materials)
     Flux.Version = Flux.Version .. "-debug"
+
+    hook.Add("DrawOverlay", "FluxDebug2", function()
+        surface.SetFont(Flux.Font(14, false))
+        Flux.RGB(255,255,255,255)
+        Flux.Text.Left(300, 300, Flux.Text.Wrap(33, "hi hi hi!"))
+    end)
     hook.Add("DrawOverlay", "FluxDebug", function()
         -- Draw Time
         if gui.IsGameUIVisible() then return end
