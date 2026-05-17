@@ -2,7 +2,7 @@ local Flux = {Debug = true}
 _G.Flux = Flux
 Flux.StartTick = SysTime()
 Flux.Prefix = "flux-ui"
-Flux.Version = "0.6.0"
+Flux.Version = "0.10.0"
 
 Flux.Colors = {
     Accent = Color(43, 85, 245),
@@ -12,9 +12,13 @@ Flux.Colors = {
 
     Red = Color(255, 25, 25),
     Orange = Color(255, 100, 0),
+    Green = Color(32, 255, 32),
 
     Background = Color(25, 25, 25, 220),
     ButtonBackground = Color(45, 45, 45, 225),
+
+    DropdownBackground = Color(42, 42, 42, 215),
+    DropdownOutline = Color(16, 16, 16, 240),
 
     Outline = Color(38, 38, 38, 255),
     ButtonOutline = Color(25, 25, 25, 245),
@@ -32,7 +36,6 @@ local ClientInclude = SERVER and AddCSLuaFile or include
 local SharedInclude = function(f) ServerInclude(f) ClientInclude(f) end
 local function RecursiveInclude(path, callback)
     local Files, Directories = file.Find(path .. "/*", "LUA")
-
     for k, v in SortedPairs(Files) do
         if not string.EndsWith(v, ".lua") then continue end
         callback(path .. "/" .. v)
@@ -48,8 +51,3 @@ RecursiveInclude("flux/elements", ClientInclude)
 
 Flux.Initalized = true
 Flux.Print("Ready in " .. math.Round(SysTime() - Flux.StartTick, 2) .. " seconds.")
-
-hook.Add("HUDPaint", "flux", function()
-    Flux.Text.Outline(Flux.Text.Left, 150, 32, 1, string.rep([[a]],7))
-
-end)

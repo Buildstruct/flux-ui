@@ -43,9 +43,9 @@ function Flux.Shapes.Shade(x, y, w, h, alpha)
     surface.SetDrawColor(Flux.DrawColor.r, Flux.DrawColor.g, Flux.DrawColor.b, Flux.DrawColor.a)
 end
 
-function Flux.Shapes.ShadedRect(x, y, w, h)
+function Flux.Shapes.ShadedRect(x, y, w, h, followDrawAlpha)
     Flux.Shapes.Rectangle(x, y, w, h)
-    Flux.Shapes.Shade(x, y, w, h)
+    Flux.Shapes.Shade(x, y, w, h, followDrawAlpha and Flux.DrawColor.a or nil)
     surface.SetDrawColor(Flux.DrawColor.r, Flux.DrawColor.g, Flux.DrawColor.b, Flux.DrawColor.a)
 end
 

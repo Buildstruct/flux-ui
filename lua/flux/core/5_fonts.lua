@@ -1,5 +1,5 @@
 local Fonts = {}
-Flux.Fonts = {}
+Flux.Fonts = Fonts
 
 Fonts.Registered = {}
 

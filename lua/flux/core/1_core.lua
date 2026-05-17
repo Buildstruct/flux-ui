@@ -1,18 +1,9 @@
-Flux.Materials = {
-    Blur = Material("pp/blurscreen"),
-    GradientUp = Material("vgui/gradient-u"),
-    GradientDown = Material("vgui/gradient-d"),
-    GradientRight = Material("vgui/gradient-r"),
-    GradientLeft = Material("vgui/gradient-l"),
-    ScrollbarUp = Material("icon16/bullet_arrow_up.png"),
-    ScrollbarDown = Material("icon16/bullet_arrow_down.png")
-}
-
 Flux.DrawColor = {r = 255, g = 255, b = 255, a = 255}
 Flux.OutlineDrawColor = {r = 0, g = 0, b = 0, a = 255}
 
 function Flux.ResetColor() Flux.RGB(255, 255, 255) end
 function Flux.Color(ColorObject, ForceAlpha)
+    if not ColorObject then Flux.ResetColor() return end
     if not ColorObject.r and not ColorObject.g and not ColorObject.b then return Flux.Warn("Attempted to call Flux.Color with a non color object. The ActiveColor was not changed.") end
     if not istable(Flux.DrawColor) then Flux.DrawColor = {r = ColorObject.r, g = ColorObject.g, b = ColorObject.b, a = ColorObject.a or 255} return end
 
@@ -50,16 +41,18 @@ function Flux.RGBOutline(R, G, B, A)
 end
 
 -- Debug Interface
-if Flux.Debug then
-    local CachedMaterials = table.Count(Flux.Materials)
-    Flux.Version = Flux.Version .. "-debug"
+local DebugCVar = CreateClientConVar("fluxui_debug", "1", true, true, "Debug information for the FluxUI Library", 0, 1)
+function Flux.ToggleDebugInterface(toggle)
+    if not toggle or toggle == false then
+        Flux.Print("Disabling FluxUI-Debug hook.")
+        hook.Remove("DrawOverlay", "FluxUI-Debug")
+        return
+    end
 
-    hook.Add("DrawOverlay", "FluxDebug2", function()
-        surface.SetFont(Flux.Font(14, false))
-        Flux.RGB(255,255,255,255)
-        Flux.Text.Left(300, 300, Flux.Text.Wrap(33, "hi hi hi!"))
-    end)
-    hook.Add("DrawOverlay", "FluxDebug", function()
+    local CachedMaterials = table.Count(Flux.Materials)
+    Flux.Version = string.EndsWith(Flux.Version, "-debug") and Flux.Version or Flux.Version .. "-debug"
+    Flux.Print("Creating the FluxUI-Debug interface")
+    hook.Add("DrawOverlay", "FluxUI-Debug", function()
         -- Draw Time
         if gui.IsGameUIVisible() then return end
         local R,G,B,A = Flux.DrawColor.r, Flux.DrawColor.g, Flux.DrawColor.b, Flux.DrawColor.a
@@ -103,6 +96,10 @@ if Flux.Debug then
         -- Reset
         Flux.RGB(R,G,B,A)
     end)
-else
-    hook.Remove("DrawOverlay", "FluxDebug")
 end
+
+Flux.ToggleDebugInterface(Flux.Debug and Flux.Debug == true)
+cvars.AddChangeCallback("fluxui_debug", function(_, old, new) 
+    Flux.Debug = (new == 1) or false
+    Flux.ToggleDebugInterface(Flux.Debug and Flux.Debug == true)
+end, "fluxui_debug_toggle")
