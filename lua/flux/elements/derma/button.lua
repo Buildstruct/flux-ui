@@ -12,7 +12,7 @@ function Derma.Button(parent, callback, ...)
     FluxButton.Flux = true
     FluxButton:SetText("")
 
-    function FluxButton:DoClick() callback(self) end
+    function FluxButton:DoClick() if callback then callback(self) end end
     function FluxButton:SetAutoLayout(value) self.DoLayout = value return self end
     function FluxButton:SetContentPadding(value) self.ContentPadding = value return self end
     function FluxButton:SetColor(value) self.Color = value return self end
@@ -22,7 +22,7 @@ function Derma.Button(parent, callback, ...)
     function FluxButton:SetTextColor(value) self.TextColor = value return self end
     function FluxButton:SetText(...) 
         self.Content = {...}
-        self:InvalidateLayout()
+        self:InvalidateLayout(true)
         return self 
     end
 

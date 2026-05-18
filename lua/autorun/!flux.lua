@@ -2,7 +2,7 @@ local Flux = {Debug = true}
 _G.Flux = Flux
 Flux.StartTick = SysTime()
 Flux.Prefix = "flux-ui"
-Flux.Version = "0.10.0"
+Flux.Version = "0.11.0"
 
 Flux.Colors = {
     Accent = Color(43, 85, 245),
@@ -13,6 +13,8 @@ Flux.Colors = {
     Red = Color(255, 25, 25),
     Orange = Color(255, 100, 0),
     Green = Color(32, 255, 32),
+    Blue = Color(63, 63, 255),
+    Transparent = Color(0, 0, 0, 0),
 
     Background = Color(25, 25, 25, 220),
     ButtonBackground = Color(45, 45, 45, 225),

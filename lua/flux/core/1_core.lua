@@ -98,8 +98,8 @@ function Flux.ToggleDebugInterface(toggle)
     end)
 end
 
-Flux.ToggleDebugInterface(Flux.Debug and Flux.Debug == true)
+Flux.ToggleDebugInterface(Flux.Debug)
 cvars.AddChangeCallback("fluxui_debug", function(_, old, new) 
-    Flux.Debug = (new == 1) or false
-    Flux.ToggleDebugInterface(Flux.Debug and Flux.Debug == true)
+    Flux.Debug = tostring(new) == "1"
+    Flux.ToggleDebugInterface(Flux.Debug)
 end, "fluxui_debug_toggle")

@@ -6,6 +6,7 @@ Flux.Materials = {
     GradientLeft = Material("vgui/gradient-l"),
     ScrollbarUp = Material("icon16/bullet_arrow_up.png"),
     ScrollbarDown = Material("icon16/bullet_arrow_down.png"),
+    DropdownSubmenu = Material("icon16/bullet_arrow_down.png"),
     Noise = CreateMaterial("fluxblurnoisefx", "UnlitGeneric", {
         ["$basetexture"] = "engine/noise-blur-256x256",
         ["$translucent"] = 1,

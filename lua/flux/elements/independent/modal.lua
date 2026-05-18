@@ -81,5 +81,7 @@ function Elements.Modal(Title, Content)
     -- Close button
     local Close = Flux.Elements.CloseButton(Container, Modal)
     Modal.Close = Close
+    
+    table.insert(Flux.ActiveElements, Modal)
     return Modal, Container
 end

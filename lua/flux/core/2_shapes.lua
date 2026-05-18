@@ -9,6 +9,15 @@ function Gradient.Up(x, y, w, h)
     surface.SetMaterial(Flux.Materials.GradientDown)
     surface.DrawTexturedRect(x, y, w, h)
 end
+function Gradient.Right(x, y, w, h)
+    surface.SetMaterial(Flux.Materials.GradientLeft)
+    surface.DrawTexturedRect(x, y, w, h)
+end
+
+function Gradient.Left(x, y, w, h)
+    surface.SetMaterial(Flux.Materials.GradientRight)
+    surface.DrawTexturedRect(x, y, w, h)
+end
 
 local Shapes = {}
 Flux.Shapes = Shapes
