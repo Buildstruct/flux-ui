@@ -2,7 +2,7 @@ local Developer = {}
 Flux.Developer = Developer
 
 -- Debug Interface
-local DebugCVar = CreateClientConVar("fluxui_debug", "1", true, false, "Debug information for the FluxUI Library", 0, 2)
+local DebugCVar = CreateClientConVar("fluxui_developer", "0", true, false, "Developer information for the FluxUI Library", 0, 2)
 function Flux.ToggleDebugInterface(toggle)
     if not toggle or toggle == false then
         Flux.Print("Disabling FluxUI-Debug hook.")
@@ -61,7 +61,7 @@ function Flux.ToggleDebugInterface(toggle)
 end
 
 Flux.ToggleDebugInterface(DebugCVar:GetBool())
-cvars.AddChangeCallback("fluxui_debug", function(_, old, new)
+cvars.AddChangeCallback("fluxui_developer", function(_, old, new)
     Flux.Debug = tonumber(new)
     Flux.ToggleDebugInterface(Flux.Debug ~= 0)
-end, "fluxui_debug_toggle")
+end, "fluxui_developer_toggle")
