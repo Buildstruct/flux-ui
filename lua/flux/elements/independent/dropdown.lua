@@ -156,7 +156,7 @@ function Elements.DropdownSubMenu(parent, callback, ...)
 
         Flux.Color(Flux.Utility.ConvertRainbow(self.TextColor), ButtonHovered and 255 or 190)
         surface.SetFont(self.Font)
-        local _, textHeight = Flux.Text.Center((w / 2) + (self.Icon and (h-12) / 2 + 3 or 0) - 2, (h / 2) - self.Texth / 2, unpack(self.Content))
+        local _, textHeight = Flux.Text.Center((w / 2) + (self.Icon and (h-12) / 2 + 3 or 0) - 2, (h / 2) - self.TextH / 2, unpack(self.Content))
         if self.Icon then
             surface.SetDrawColor(255, 255, 255, ButtonHovered and 245 or 190)
             surface.SetMaterial(self.Icon)
@@ -165,7 +165,7 @@ function Elements.DropdownSubMenu(parent, callback, ...)
             if OnlyIcon then
                 surface.DrawTexturedRect(w / 2 - (h-12) / 2, h / 2 - (h-12) / 2 - 2, h - 12, h - 12)
             else
-                surface.DrawTexturedRect(w / 2 - self.Textw / 2 - (h-12) / 2 - 3 - 2, h / 2 - (h-12) / 2, h - 12, h - 12)
+                surface.DrawTexturedRect(w / 2 - self.TextW / 2 - (h-12) / 2 - 3 - 2, h / 2 - (h-12) / 2, h - 12, h - 12)
             end
         end
 
