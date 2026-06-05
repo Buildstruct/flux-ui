@@ -2,7 +2,7 @@ local Flux = {}
 _G.Flux = Flux
 Flux.StartTick = SysTime()
 Flux.Prefix = "flux-ui"
-Flux.Version = "0.18.1"
+Flux.Version = "0.18.2"
 
 -- Begin Initalization
 function Flux.Print(...) if not Flux.Debug then return end MsgC(Flux.Colors.White, "(", Flux.Colors.Accent, Flux.Prefix, Flux.Colors.White, ") ", ...) Msg('\n') end
