@@ -1,3 +1,28 @@
+Flux.Colors = {
+    Accent = Color(43, 85, 245),
+    White = Color(255, 255, 255),
+    DimWhite = Color(230, 230, 230),
+    Gray = Color(185, 185, 185),
+    Black = Color(0, 0, 0),
+
+    Red = Color(255, 25, 25),
+    Orange = Color(255, 100, 0),
+    Green = Color(32, 255, 32),
+    Blue = Color(63, 63, 255),
+    Transparent = Color(0, 0, 0, 0),
+
+    LightRed = Color(255, 200, 200),
+
+    Background = Color(25, 25, 25, 220),
+    ButtonBackground = Color(45, 45, 45, 225),
+
+    DropdownBackground = Color(42, 42, 42, 215),
+    DropdownOutline = Color(16, 16, 16, 240),
+
+    Outline = Color(38, 38, 38, 255),
+    ButtonOutline = Color(25, 25, 25, 245),
+}
+
 Flux.Materials = {
     Blur = Material("pp/blurscreen"),
     GradientUp = Material("vgui/gradient-u"),
@@ -24,7 +49,7 @@ Flux.Derma = {}
 -- Screen Resolution
 Flux.ScrW = ScrW()
 Flux.ScrH = ScrH()
-hook.Add("OnScreenSizeChanged", "FluxScreenResolution", function() 
+hook.Add("OnScreenSizeChanged", "FluxScreenResolution", function()
     Flux.ScrW = ScrW()
     Flux.ScrH = ScrH()
     Flux.Print("Screen resolution was changed, updated ScrW and ScrH values: " .. Flux.ScrW .. "x" .. Flux.ScrH)

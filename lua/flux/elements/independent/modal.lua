@@ -50,8 +50,8 @@ function Elements.Modal(Title, Content)
         Flux.Text.Outline(Flux.Text.Left, 12, 30, 1, unpack(Modal.Content))
     end
     function Container:GetCenter(w, h)
-        return math.max(Modal:GetWide()/2 - (w or Container:GetWide())/2, 0),
-        math.max(Modal:GetTall()/2 - (h or Container:GetTall())/2, 100)
+        return math.max(Modal:GetWide() / 2 - (w or Container:GetWide()) / 2, 0),
+        math.max(Modal:GetTall() / 2 - (h or Container:GetTall()) / 2, 100)
     end
 
     -- Button list
@@ -81,7 +81,7 @@ function Elements.Modal(Title, Content)
     -- Close button
     local Close = Flux.Elements.CloseButton(Container, Modal)
     Modal.Close = Close
-    
+
     table.insert(Flux.ActiveElements, Modal)
     return Modal, Container
 end

@@ -14,7 +14,7 @@ function Elements.Checkbox(parent, callback, default)
 
     function Checkbox:Paint(w, h)
         self.Lerp = math.Approach(self.Lerp or (self.Value and 1 or 0), self.Value and 1 or 0, RealFrameTime() * 13)
-        
+
         Flux.Color(Flux.Colors.ButtonBackground, 185)
         Flux.Shapes.ShadedRect(0, 0, w, h)
         Flux.Color(Flux.Colors.ButtonOutline)
@@ -28,7 +28,7 @@ function Elements.Checkbox(parent, callback, default)
         local offset = self:IsHovered() and input.IsMouseDown(MOUSE_FIRST) and 2 or 0
         surface.SetDrawColor(255, 255, 255, 255 * self.Lerp)
         surface.SetMaterial(tick)
-        surface.DrawTexturedRect(5 + offset/2, 5 + offset/2, h-10-offset, h-10-offset)
+        surface.DrawTexturedRect(5 + offset / 2, 5 + offset / 2, h-10-offset, h-10-offset)
 
 
     end

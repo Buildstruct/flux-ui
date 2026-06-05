@@ -7,6 +7,8 @@ function Elements.DropdownPanel(button, callback, belowButton)
     Dropdown.Paint = nil
     Dropdown.Flux = "Dropdown"
     Dropdown.TargetWidth = 15
+    Dropdown.OpenX = gui.MouseX()
+    Dropdown.OpenY = gui.MouseY()
     local ExpectButton = button ~= nil
     function Dropdown:Think()
         if not IsValid(Dropdown.Container) or (button and not IsValid(button)) then Dropdown:Remove() return end
@@ -16,7 +18,7 @@ function Elements.DropdownPanel(button, callback, belowButton)
 
         -- Button no longer exists
         if ExpectButton and (not IsValid(button) or not button:IsVisible()) then self:Remove() return end
-        
+
         -- Move too far away
         local StartX, StartY = self:LocalToScreen(0, 0)
         local EndX, EndY = self:LocalToScreen(self:GetWide(), self:GetTall())
@@ -33,25 +35,26 @@ function Elements.DropdownPanel(button, callback, belowButton)
 
         for k, v in pairs(self.Container:GetChildren()) do
             local TextWidth = v.TextW or 0
-            Width = math.max(TextWidth + 30 + (v.Icon and (v:GetTall()-12 + 8) or 0) + (v.IsSubmenu and 8 or 0), v:GetWide(), Width)
+            Width = math.max(TextWidth + 30 + (v.Icon and (v:GetTall() - 12 + 8) or 0) + (v.IsSubmenu and 8 or 0), v:GetWide(), Width)
             Height = Height + v:GetTall() + 2
         end
 
         return math.Clamp(Width, 125, 375), math.max(Height, 15)
-    end 
-    function Dropdown:SetWide(width) 
-        self.TargetWidth = width 
-        self:SetSize(self:GetTargetSize())
-        return self 
     end
-    function Dropdown:PerformLayout() self:SetSize(self:GetTargetSize()) end
-    function Dropdown:Open() 
-        self.Opened = true 
+    function Dropdown:SetWide(width)
+        self.TargetWidth = width
+        self:SetSize(self:GetTargetSize())
+        return self
+    end
+    function Dropdown:SetFont(font) self.Font = font return self end
+    function Dropdown:PerformLayout() self:SetSize(self:GetTargetSize()) self:PerformPosition() end
+    function Dropdown:Open()
+        self.Opened = true
         Dropdown:MakePopup()
         Dropdown:SetKeyboardInputEnabled(false)
     end
     function Dropdown:Close() self.Opened = false end
-    
+
     -- Container
     local Container = vgui.Create("DPanel", Dropdown)
     Dropdown.Container = Container
@@ -72,22 +75,27 @@ function Elements.DropdownPanel(button, callback, belowButton)
     end
     function Container:PerformLayout() Dropdown:SetSize(Dropdown:GetTargetSize()) end
     function Container:OnChildAdded(child)
-        if not IsValid(child) then return end 
-        if child.DoLayout then child.DoLayout = false end
-        child:SetWide(self:GetWide())
-        child:Dock(TOP)
-        child:DockMargin(0,0,0,2)
+        if not IsValid(child) then return end
+        Dropdown:Add(child)
     end
     function Dropdown:Add(child)
-        if not IsValid(child) then return end 
-        if child.DoLayout then child.DoLayout = false end
+        if not IsValid(child) then return end
         child:SetParent(self.Container)
         child:SetWide(self:GetWide())
         child:Dock(TOP)
         child:DockMargin(0,0,0,2)
+
+        -- because fuck it!
+        timer.Simple(0, function()
+            if not IsValid(child) or child:GetParent() ~= self.Container then return end
+            if self.Font and child.SetFont then child:SetFont(self.Font) end
+            if child.DoLayout then child.DoLayout = false end
+            child:SetWide(self:GetWide())
+            if child.Flux and child.Flux == "Button" then child:SetTall(child.TextH + 12) end
+        end)
     end
     function Dropdown:OnChildAdded(child)
-        if not IsValid(child) then return end 
+        if not IsValid(child) then return end
         self:Add(child)
     end
 
@@ -103,20 +111,33 @@ function Elements.DropdownPanel(button, callback, belowButton)
     end
     Dropdown.AddSpacer = Container.AddSpacer
 
-    -- Boundries
-    Dropdown:SetSize(Dropdown:GetTargetSize())
-    if belowButton and IsValid(button) then
-        local ButtonX, ButtonY = button:LocalToScreen(0, button:GetTall())
-        Dropdown:SetPos(math.Clamp(ButtonX, 0, ScrW() - Dropdown:GetWide()), math.Clamp(ButtonY, 0, ScrH() - Dropdown:GetTall()))
-    else
-        Dropdown:SetPos(math.Clamp(gui.MouseX(), 0, ScrW() - Dropdown:GetWide()), math.Clamp(gui.MouseY(), 0, ScrH() - Dropdown:GetTall()))
+    -- Set Dropdown Position
+    function Dropdown:PerformPosition()
+        -- Button
+        if belowButton and IsValid(button) then
+            local ButtonX, ButtonY = button:LocalToScreen(0, button:GetTall())
+            local TargetX, TargetY = ButtonX, ButtonY
+            TargetX = ((TargetX + self:GetWide()) > Flux.ScrW and (Flux.ScrW - self:GetWide())) or (TargetX < 0 and 0) or TargetX
+            TargetY = ((TargetY + self:GetTall()) > Flux.ScrH and (Flux.ScrH - self:GetTall())) or (TargetY < 0 and 0) or TargetY
+            return Dropdown:SetPos(TargetX, TargetY)
+        end
+
+        -- Normal (mouse)
+        local TargetX, TargetY = self.OpenX, self.OpenY
+        TargetX = ((TargetX + self:GetWide()) > Flux.ScrW and (Flux.ScrW - self:GetWide())) or (TargetX < 0 and 0) or TargetX
+        TargetY = ((TargetY + self:GetTall()) > Flux.ScrH and (Flux.ScrH - self:GetTall())) or (TargetY < 0 and 0) or TargetY
+        return Dropdown:SetPos(TargetX, TargetY)
     end
 
+    -- Boundries
+    local targetW, targetH = Dropdown:GetTargetSize()
+    Dropdown:SetSize(targetW, targetH)
+    Dropdown:PerformPosition()
     if callback and isfunction(callback) then callback(Dropdown, Container) end
     table.insert(Flux.ActiveElements, Dropdown)
     return Dropdown
 end
- 
+
 function Elements.DropdownSubMenu(parent, callback, ...)
     local SubmenuButton = Flux.Derma.Button(parent, callback, ...)
     function SubmenuButton:Paint(w, h)
@@ -131,41 +152,49 @@ function Elements.DropdownSubMenu(parent, callback, ...)
 
         -- SubMenu
         Flux.RGB(Flux.Utility.ConvertRainbow(self.OutlineColor), 200)
-        Flux.Gradient.Left(w/2, 0, w/2, h)
+        Flux.Gradient.Left(w / 2, 0, w / 2, h)
 
         Flux.Color(Flux.Utility.ConvertRainbow(self.TextColor), ButtonHovered and 255 or 190)
         surface.SetFont(self.Font)
-        local textWidth, textHeight = Flux.Text.Center((w/2) + (self.Icon and (h-12)/2 + 3 or 0) - 2, (h/2) - self.TextH/2, unpack(self.Content))
+        local _, textHeight = Flux.Text.Center((w / 2) + (self.Icon and (h-12) / 2 + 3 or 0) - 2, (h / 2) - self.Texth / 2, unpack(self.Content))
         if self.Icon then
             surface.SetDrawColor(255, 255, 255, ButtonHovered and 245 or 190)
             surface.SetMaterial(self.Icon)
-            
+
             local OnlyIcon = self.Content and self.Content[1] == "" and not self.Content[2]
             if OnlyIcon then
-                surface.DrawTexturedRect(w/2 - (h-12)/2, h/2 - (h-12)/2 - 2, h - 12, h - 12)
+                surface.DrawTexturedRect(w / 2 - (h-12) / 2, h / 2 - (h-12) / 2 - 2, h - 12, h - 12)
             else
-                surface.DrawTexturedRect(w/2 - self.TextW/2 - (h-12)/2 - 3 - 2, h/2 - (h-12)/2, h - 12, h - 12)
+                surface.DrawTexturedRect(w / 2 - self.Textw / 2 - (h-12) / 2 - 3 - 2, h / 2 - (h-12) / 2, h - 12, h - 12)
             end
         end
 
         -- Submenu icon
         Flux.RGB(255, 255, 255)
         surface.SetFont(Flux.Font(11, true))
-        Flux.Text.Outline(Flux.Text.Right, w - 5, h/2 - textHeight/2 + 1, 1, ">")
+        Flux.Text.Outline(Flux.Text.Right, w - 5, h / 2 - textHeight / 2 + 1, 1, ">")
     end
     SubmenuButton.IsSubmenu = true
     SubmenuButton:SetCursor("arrow")
     SubmenuButton.FluxSubmenuFirstParent = parent and parent.FluxSubmenuFirstParent or parent
-    
+
+    function SubmenuButton:SetFont(value)
+        self.Font = value
+        self.Dropdown.Font = value
+        return self
+    end
     function SubmenuButton:Think(x, y)
         if not IsValid(parent) then return self:Remove() end
         if not IsValid(self.Dropdown) then return self:Remove() end
-        if self.Dropdown.Opened then self.Dropdown:SetPos(self:LocalToScreen(self:GetWide() + 4, 0)) end
+        --if self.Dropdown.Opened then self.Dropdown:SetPos(self:LocalToScreen(self:GetWide() + 4, 0)) end
         if not self:IsHovered() then
             return
         end
         parent.FluxSubmenuKeepAlive = self.Dropdown
-        self.Dropdown:SetPos(self:LocalToScreen(self:GetWide() + 4, 0))
+
+        local X, Y = self:LocalToScreen(self:GetWide() + 4, 0)
+        local W, H = self.Dropdown:GetTargetSize()
+        self.Dropdown:SetPos(math.Clamp(X, 0, Flux.ScrW - W), math.Clamp(Y, 0, Flux.ScrH - H))
         self.Dropdown:Open()
     end
     function SubmenuButton:OnRemove()
@@ -180,7 +209,7 @@ function Elements.DropdownSubMenu(parent, callback, ...)
         if IsValid(self.FluxSubmenuFirstParent) then self.FluxSubmenuFirstParent:Remove() end
     end
     function SubmenuButton:OnChildAdded(child)
-        if not IsValid(child) then return end 
+        if not IsValid(child) then return end
         if not IsValid(self.Dropdown) then return end
         self.Dropdown:Add(child)
     end
@@ -188,6 +217,7 @@ function Elements.DropdownSubMenu(parent, callback, ...)
     -- Submenu Dropdown
     local Dropdown = Elements.DropdownPanel(SubmenuButton, function() end, nil)
     SubmenuButton.Dropdown = Dropdown
+    function Dropdown:PerformPosition() end
     function Dropdown:Think()
         if not IsValid(Dropdown.Container) or (button and (not IsValid(button) or not IsValid(button:GetParent()))) then Dropdown:Remove() return end
         self.Lerp = math.Approach(self.Lerp or 0, self.Opened and 1 or 0, RealFrameTime() * 3)
@@ -197,13 +227,12 @@ function Elements.DropdownSubMenu(parent, callback, ...)
         -- Button no longer exists
         if ExpectButton and (not IsValid(button) or not button:IsVisible()) then self:Remove() return end
         if ExpectButton and (not IsValid(button:GetParent())) then self:Remove() return end
-        
+
         -- Move too far away
         local StartX, StartY = self:LocalToScreen(0, 0)
         local EndX, EndY = self:LocalToScreen(self:GetWide(), self:GetTall())
         local MouseX, MouseY = gui.MouseX(), gui.MouseY()
-        local MouseOutOfBounds = (MouseX < StartX or MouseX > EndX or MouseY < StartY or MouseY > EndY)
-        
+
         if SubmenuButton.FluxSubmenuKeepAlive and IsValid(SubmenuButton.FluxSubmenuKeepAlive) and SubmenuButton.FluxSubmenuKeepAlive.Opened then
             return
         end

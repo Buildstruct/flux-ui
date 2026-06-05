@@ -13,7 +13,7 @@ function Memory.Push(index, ...)
 end
 
 function Memory.Check(index)
-    return Memory.Cache[index] ~= nil 
+    return Memory.Cache[index] ~= nil
 end
 function Memory.Pull(index, spitRaw)
     if not Memory.Cache[index] then
@@ -29,24 +29,24 @@ function Memory.PullOrPush(index, ...)
     if Memory.Cache[index] ~= nil  then
         local Pulled = Memory.Pull(index, true)
 
-       -- if Memory.Cache[index].NextModify and Memory.Cache[index].NextModify < Memory.Tick then
+        if Memory.Cache[index].NextModify and Memory.Cache[index].NextModify < Memory.Tick then
             local vargs = {...}
-           -- Memory.Cache[index].NextModify = Memory.Tick + Flux.Config.MemoryModificationDelay
-            
+            Memory.Cache[index].NextModify = Memory.Tick + Flux.Config.MemoryModificationDelay
+
             if #vargs == Pulled then
                 local Duplicate = true
                 for k, v in ipairs(vargs) do
-                    if not Pulled[indexVarg] or v ~= Pulled[k]  then 
+                    if not Pulled[indexVarg] or v ~= Pulled[k] then
                         Duplicate = false
-                        break 
+                        break
                     end
-                end  
+                end
 
                 if not Duplicate then
                     Pulled = {Memory.Push(index, ...)}
                 end
             end
-        --end
+        end
 
         return unpack(Pulled)
     end

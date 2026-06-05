@@ -52,9 +52,9 @@ end
 
 function Text.GetTextSize(...)
     local stripped = Text.StrippedConcat(...)
-    
-    if Flux.Memory.Check(stripped..Text.MemoryIdentifier()) then
-        return Flux.Memory.Pull(stripped..Text.MemoryIdentifier())
+
+    if Flux.Memory.Check(stripped .. Text.MemoryIdentifier()) then
+        return Flux.Memory.Pull(stripped .. Text.MemoryIdentifier())
     end
 
     local width, curwidth, height = 0, 0, 0
@@ -62,7 +62,7 @@ function Text.GetTextSize(...)
     for i = 1, #Lines do
         local line = Lines[i]
         if not isstring(line) then continue end
-        local textWidth, textHeight = Flux.Memory.PullOrPush(line..Text.MemoryIdentifier(), surface.GetTextSize(line))
+        local textWidth, textHeight = Flux.Memory.PullOrPush(line .. Text.MemoryIdentifier(), surface.GetTextSize(line))
         curwidth = curwidth + textWidth
         width = math.max(curwidth, width)
 
@@ -78,7 +78,7 @@ function Text.GetTextSize(...)
     return width, height
 end
 
-function Text.Wrap(width, ...) 
+function Text.Wrap(width, ...)
     local ret = {}
     width = width or 100
     for k, v in ipairs({...}) do
@@ -88,13 +88,13 @@ function Text.Wrap(width, ...)
         for i = 1, #words do
             local word = words[i]
             local size = surface.GetTextSize(word)
-            if CurW+size >= width then
+            if CurW + size >= width then
                 CurW = 0
                 table.insert(ret, "\n")
-                table.insert(ret, word.." ")
+                table.insert(ret, word .. " ")
             else
                 CurW = CurW + size
-                table.insert(ret, word.." ")
+                table.insert(ret, word ..  " ")
             end
         end
     end
@@ -117,13 +117,13 @@ function Text.Draw(x, y, ...)
         local Lines = string.Split(data, "\n")
         for k = 1, #Lines do
             local line = Lines[k]
-            local w, h = Flux.Memory.PullOrPush(line..Text.MemoryIdentifier(), surface.GetTextSize(line))
+            local w, h = Flux.Memory.PullOrPush(line .. Text.MemoryIdentifier(), surface.GetTextSize(line))
             surface.SetTextPos(x, y)
             surface.DrawText(line)
             x = x + w
 
             if #Lines > 1 and #Lines ~= k then
-                y = y + h 
+                y = y + h
                 x = Origin
             end
         end
@@ -149,7 +149,7 @@ end
 
 function Text.Center(x, y, ...)
     local w, h = Text.GetTextSize(...)
-    Text.Draw(x - w/2, y, ...)
+    Text.Draw(x - w / 2, y, ...)
     return w, h
 end
 
@@ -163,4 +163,45 @@ function Text.Left(x, y, ...)
     local w, h = Text.GetTextSize(...)
     Text.Draw(x, y, ...)
     return w, h
+end
+
+function Text.DoScroll(panel, x, y, w, h, stroke, ...)
+    local TextW, TextH = Text.GetTextSize(...)
+    local screenx, screeny = x, y
+    if panel and panel:IsValid() then
+        screenx, screeny = panel:LocalToScreen(x, y)
+    end
+    local RetW, RetH
+    local StartTime = Flux.Memory.PullOrPush(x .. y .. w .. h .. TextW .. TextH .. Text.MemoryIdentifier(), SysTime())
+    render.SetScissorRect(screenx, screeny, screenx + w, screeny + h, true)
+        local progress = math.ease.InOutSine(1-math.Clamp((math.abs(((SysTime() - StartTime) % 20) / (20 / 2) - 1) * 2) - 0.5, 0, 1))
+        if stroke then
+            RetW, RetH = Text.Outline(Text.Left, x - (TextW - w) * progress, y, stroke, ...)
+        else
+            RetW, RetH = Text.Left(x - (TextW - w) * progress, y, ...)
+        end
+    render.SetScissorRect(0, 0, 0, 0, false)
+    return RetW, RetH
+end
+
+function Text.Scroll(panel, x, y, w, h, stroke, ...)
+    local TextW = Text.GetTextSize(...)
+    if TextW < w then
+        if stroke then
+            return Text.Outline(Text.Left, x, y, stroke, ...)
+        end
+        return Text.Left(x, y, ...)
+    end
+    return Text.DoScroll(panel, x, y, w, h, stroke, ...)
+end
+
+function Text.ScrollCenter(panel, x, y, w, h, stroke, ...)
+    local TextW = Text.GetTextSize(...)
+    if TextW < w then
+        if stroke then
+            return Text.Outline(Text.Center, x + w / 2, y, stroke, ...)
+        end
+        return Text.Center(x + w / 2, y, ...)
+    end
+    return Text.DoScroll(panel, x, y, w, h, stroke, ...)
 end
