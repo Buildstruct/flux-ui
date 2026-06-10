@@ -2,7 +2,7 @@ local Flux = {}
 _G.Flux = Flux
 Flux.StartTick = SysTime()
 Flux.Prefix = "flux-ui"
-Flux.Version = "0.18.2"
+Flux.Version = "1.0.0"
 
 -- Begin Initalization
 function Flux.Print(...) if not Flux.Debug then return end MsgC(Flux.Colors.White, "(", Flux.Colors.Accent, Flux.Prefix, Flux.Colors.White, ") ", ...) Msg('\n') end
@@ -24,7 +24,6 @@ local function RecursiveInclude(path, callback)
 end
 
 SharedInclude("flux/config.lua")
-ServerInclude("flux/server.lua")
 SharedInclude("flux/utility.lua")
 RecursiveInclude("flux/core", ClientInclude)
 RecursiveInclude("flux/elements", ClientInclude)

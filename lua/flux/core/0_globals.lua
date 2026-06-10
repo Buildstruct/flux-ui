@@ -8,6 +8,7 @@ Flux.Colors = {
     Red = Color(255, 25, 25),
     Orange = Color(255, 100, 0),
     Green = Color(32, 255, 32),
+    Yellow = Color(240, 240, 0),
     Blue = Color(63, 63, 255),
     Transparent = Color(0, 0, 0, 0),
 
@@ -21,6 +22,12 @@ Flux.Colors = {
 
     Outline = Color(38, 38, 38, 255),
     ButtonOutline = Color(25, 25, 25, 245),
+
+    Seperator = Color(127, 127, 127, 200),
+    SubSeperator = Color(100, 100, 100, 175),
+
+    Hyperlink = Color(132, 132, 255),
+    HyperlinkHover = Color(92, 92, 255),
 }
 
 Flux.Materials = {
