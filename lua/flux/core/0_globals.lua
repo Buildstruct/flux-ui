@@ -44,7 +44,8 @@ Flux.Materials = {
         ["$translucent"] = 1,
         ["$vertexalpha"] = 1,
         ["$vertexcolor"] = 1
-    })
+    }),
+    Placeholder = Material("matsys_regressiontest/background")
 }
 
 Flux.IsLinux = system.IsLinux()
@@ -54,10 +55,12 @@ Flux.Elements = {}
 Flux.Derma = {}
 
 -- Screen Resolution
+Flux.OnScreenSizeChanged = {}
 Flux.ScrW = ScrW()
 Flux.ScrH = ScrH()
-hook.Add("OnScreenSizeChanged", "FluxScreenResolution", function()
+hook.Add("OnScreenSizeChanged", "FluxUI_ScreenResolution", function()
     Flux.ScrW = ScrW()
     Flux.ScrH = ScrH()
+    for k, v in pairs(Flux.OnScreenSizeChanged) do if isfunction(v) then v() end end
     Flux.Print("Screen resolution was changed, updated ScrW and ScrH values: " .. Flux.ScrW .. "x" .. Flux.ScrH)
 end)

@@ -175,7 +175,7 @@ function Text.DoScroll(panel, x, y, w, h, stroke, ...)
     local StartTime = Flux.Memory.PullOrPush(x .. y .. w .. h .. TextW .. TextH .. Text.MemoryIdentifier(), SysTime())
     render.SetScissorRect(screenx, screeny, screenx + w, screeny + h, true)
         local progress = math.ease.InOutSine(1-math.Clamp((math.abs(((SysTime() - StartTime) % 20) / (20 / 2) - 1) * 2) - 0.5, 0, 1))
-        if stroke then
+        if stroke and stroke >= 1 then
             RetW, RetH = Text.Outline(Text.Left, x - (TextW - w) * progress, y, stroke, ...)
         else
             RetW, RetH = Text.Left(x - (TextW - w) * progress, y, ...)
@@ -187,7 +187,7 @@ end
 function Text.Scroll(panel, x, y, w, h, stroke, ...)
     local TextW = Text.GetTextSize(...)
     if TextW < w then
-        if stroke then
+        if stroke and stroke >= 1 then
             return Text.Outline(Text.Left, x, y, stroke, ...)
         end
         return Text.Left(x, y, ...)
@@ -198,7 +198,7 @@ end
 function Text.ScrollCenter(panel, x, y, w, h, stroke, ...)
     local TextW = Text.GetTextSize(...)
     if TextW < w then
-        if stroke then
+        if stroke and stroke >= 1 then
             return Text.Outline(Text.Center, x + w / 2, y, stroke, ...)
         end
         return Text.Center(x + w / 2, y, ...)

@@ -97,18 +97,72 @@ function Flux.Shapes.Scrollbar(scrollbar)
 
 end
 
--- gmod wiki lmfao
-function Flux.Shapes.Circle(x, y, radius, segments)
-     draw.NoTexture()
-    local cir = {}
-    table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
-    for i = 0, segments do
-    local a = math.rad( ( i / segments ) * -360 )
-    table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
-    end
+-- Hacky perforamnce boost: Only render the sphere(s) once, push it to the RT, and only render said RT
+-- We could honestly just render a bunch of segments to make it look very smooth, as its only ran once
+-- nobody wil really notice since its ran during loading screen lol. Overall its a 25x performance boost
+-- compared to the method listed on the wiki.
+local CircleRT, CircleMaterial = nil, Flux.Materials.Placeholder
+local HalfCircleRT, HalfCircleMaterial = nil, Flux.Materials.Placeholder
+function Flux.GenerateCircle()
+    hook.Add("PreDrawHUD", "FluxUI_CircleGeneration", function()
+        hook.Remove("PreDrawHUD", "FluxUI_CircleGeneration")
+        local CircleGenerationStart = SysTime()
+        CircleRT = GetRenderTarget("FluxUICircle" .. Flux.ScrW .. Flux.ScrH, 4096, 4096)
+        CircleMaterial = CreateMaterial("FluxUICircle" .. Flux.ScrW .. Flux.ScrH, "UnlitGeneric", {["$basetexture"] = CircleRT:GetName(), ["$translucent"] = 1})
+        HalfCircleRT = GetRenderTarget("FluxUIHalfCircle" .. Flux.ScrW .. Flux.ScrH, 4096, 4096)
+        HalfCircleMaterial = CreateMaterial("FluxUIHalfCircle" .. Flux.ScrW .. Flux.ScrH, "UnlitGeneric", {["$basetexture"] = HalfCircleRT:GetName(), ["$translucent"] = 1})
 
-    local a = math.rad( 0 ) -- This is needed for non absolute segment counts
-    table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
+        render.PushRenderTarget(CircleRT, 0, 0, CircleRT:Width(), CircleRT:Width())
+            render.Clear(0, 0, 0, 0)
+            draw.NoTexture()
+            surface.SetDrawColor(255, 255, 255)
+            cam.Start2D()
+                cam.Start3D(Vector(10000,0,0), Angle(0,180,0), 1, 0, 0, CircleRT:Width(), CircleRT:Width())
+                    render.DrawSphere( Vector(-10000,0,0), 175, 360, 360, Color(255, 255, 255, 80))
+                    render.DrawSphere( Vector(-10000,0,0), 175 - 0.3, 360, 360, Color(255, 255, 255, 250))
+                    render.DrawSphere( Vector(-10000,0,0), 175 - 0.7, 360, 360, Color(255, 255, 255, 255))
+                cam.End3D()
+            cam.End2D()
+        render.PopRenderTarget()
 
-    surface.DrawPoly( cir )
+        render.PushRenderTarget(HalfCircleRT, 0, 0, HalfCircleRT:Width(), HalfCircleRT:Width())
+            render.Clear(0, 0, 0, 0)
+            draw.NoTexture()
+            surface.SetDrawColor(255, 255, 255)
+            cam.Start2D()
+                render.SetScissorRect(0, 0, HalfCircleRT:Width() / 2, HalfCircleRT:Width(), true)
+                    cam.Start3D(Vector(10000,0,0), Angle(0,180,0), 1, 0, 0, HalfCircleRT:Width(), HalfCircleRT:Width())
+                        render.DrawSphere( Vector(-10000,0,0), 175, 360, 360, Color(255, 255, 255, 80))
+                        render.DrawSphere( Vector(-10000,0,0), 175 - 0.3, 360, 360, Color(255, 255, 255, 250))
+                        render.DrawSphere( Vector(-10000,0,0), 175 - 0.7, 360, 360, Color(255, 255, 255, 255))
+                    cam.End3D()
+                render.SetScissorRect(0, 0, 0, 0, false)
+            cam.End2D()
+        render.PopRenderTarget()
+        Flux.Print("Circle Generation took: " .. math.Round(SysTime() - CircleGenerationStart, 4) .. "s")
+    end)
+end
+Flux.GenerateCircle()
+Flux.OnScreenSizeChanged.CircleGeneration = Flux.GenerateCircle
+
+local LastColor, LastAlpha
+function Flux.Shapes.Circle(x, y, radius)
+    local Alpha, DrawColorVector = Flux.DrawColor.a / 255, Flux.Memory.PullOrPush(Flux.DrawColor.r .. Flux.DrawColor.g .. Flux.DrawColor.b, Vector(Flux.DrawColor.r / 255, Flux.DrawColor.g / 255, Flux.DrawColor.b / 255))
+    if LastColor ~= DrawColorVector then CircleMaterial:SetVector("$color", DrawColorVector) end
+    if LastAlpha ~= Alpha then CircleMaterial:SetFloat("$alpha", Alpha) end
+    LastAlpha, LastColor = Alpha, DrawColorVector
+
+    surface.SetMaterial(CircleMaterial)
+    surface.DrawTexturedRect(x - radius / 2, y - radius / 2, radius, radius)
+end
+
+local LastColor, LastAlpha
+function Flux.Shapes.HalfCircle(x, y, radius, rot)
+    local Alpha, DrawColorVector = Flux.DrawColor.a / 255, Flux.Memory.PullOrPush(Flux.DrawColor.r .. Flux.DrawColor.g .. Flux.DrawColor.b, Vector(Flux.DrawColor.r / 255, Flux.DrawColor.g / 255, Flux.DrawColor.b / 255))
+    if LastColor ~= DrawColorVector then HalfCircleMaterial:SetVector("$color", DrawColorVector) end
+    if LastAlpha ~= Alpha then HalfCircleMaterial:SetFloat("$alpha", Alpha) end
+    LastAlpha, LastColor = Alpha, DrawColorVector
+
+    surface.SetMaterial(HalfCircleMaterial)
+    surface.DrawTexturedRectRotated(x, y, radius, radius, rot or 0)
 end
