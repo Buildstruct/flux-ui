@@ -45,7 +45,12 @@ Flux.Materials = {
         ["$vertexalpha"] = 1,
         ["$vertexcolor"] = 1
     }),
-    Placeholder = Material("matsys_regressiontest/background")
+    Placeholder = Material("matsys_regressiontest/background"),
+    Corner8 = Material("gui/corner8"),
+    Corner16 = Material("gui/corner16"),
+    Corner32 = Material("gui/corner32"),
+    Corner64 = Material("gui/corner64"),
+    Corner512 = Material("gui/corner512"),
 }
 
 Flux.IsLinux = system.IsLinux()

@@ -22,8 +22,49 @@ end
 local Shapes = {}
 Flux.Shapes = Shapes
 
+local ShadedBorderConvar = CreateClientConVar("fluxui_shadedborders", "1", true, false, "Enable/Disable shading on borders", 0, 1)
+Flux.Shapes.EnableShadingBorders = ShadedBorderConvar:GetBool()
+cvars.AddChangeCallback("fluxui_shadedborders", function(_, old, new)
+    Flux.Shapes.EnableShadingBorders = tonumber(new) == 1
+end, "fluxui_shadedborders_toggle")
+
 Flux.Shapes.Rectangle = surface.DrawRect
-Flux.Shapes.Border = surface.DrawOutlinedRect
+
+function Flux.Shapes.RoundedRect(x, y, w, h, roundness, topLeft, topRight, bottomLeft, bottomRight)
+    if roundness <= 0 then return Flux.Shapes.Rectangle(x, y, w, h) end
+
+    local calcRoundness = math.min(ScreenScale(roundness), math.floor(w / 2), math.floor(h / 2))
+    Flux.Shapes.Rectangle(x + calcRoundness, y, w - (calcRoundness * 2), h)
+    Flux.Shapes.Rectangle(x, y + calcRoundness, calcRoundness, h - (calcRoundness * 2))
+    Flux.Shapes.Rectangle(x + (w - calcRoundness), y + calcRoundness, calcRoundness, h - (calcRoundness * 2))
+
+    surface.SetMaterial(Flux.Materials["Corner" .. tostring((calcRoundness > 64 and 512 or calcRoundness > 32 and 64 or calcRoundness > 16 and 32 or calcRoundness > 8 and 16) or 8)])
+
+    if topLeft == false then
+        Flux.Shapes.Rectangle(x, y, calcRoundness, calcRoundness)
+    else
+        surface.DrawTexturedRectUV(x, y, calcRoundness, calcRoundness, 0, 0, 1, 1 )
+    end
+
+    if topRight == false then
+        Flux.Shapes.Rectangle(x + (w - calcRoundness), y, calcRoundness, calcRoundness)
+    else
+        surface.DrawTexturedRectUV(x + (w - calcRoundness), y, calcRoundness, calcRoundness, 1, 0, 0, 1 )
+    end
+
+    if bottomLeft == false then
+        Flux.Shapes.Rectangle(x, y + (h - calcRoundness), calcRoundness, calcRoundness)
+    else
+        surface.DrawTexturedRectUV(x, y + (h - calcRoundness), calcRoundness, calcRoundness, 0, 1, 1, 0 )
+    end
+
+    if bottomRight == false then
+        Flux.Shapes.Rectangle(x + (w - calcRoundness), y + (h - calcRoundness), calcRoundness, calcRoundness)
+    else
+        surface.DrawTexturedRectUV(x + (w - calcRoundness), y + (h - calcRoundness), calcRoundness, calcRoundness, 1, 1, 0, 0 )
+    end
+end
+
 function Flux.Shapes.Frame(x, y, w, h, BackgroundColor, OutlineColor, Blur, AlphaMultiplier)
     BackgroundColor = BackgroundColor or Flux.Colors.Background
     OutlineColor = OutlineColor or Flux.Colors.Outline
@@ -43,19 +84,22 @@ function Flux.Shapes.Frame(x, y, w, h, BackgroundColor, OutlineColor, Blur, Alph
     surface.SetDrawColor(Flux.DrawColor.r, Flux.DrawColor.g, Flux.DrawColor.b, Flux.DrawColor.a)
 end
 
-function Flux.Shapes.ShadedBorder(x, y, w, h, outline)
-    Flux.Shapes.Rectangle(0, y, outline, h)
-    Flux.Shapes.Rectangle(w - outline, y, outline, h)
-    Flux.Shapes.Shade(0, y + outline, outline, h - (outline * 2), Flux.DrawColor.a / 1.5)
-    Flux.Shapes.Shade(w - outline, y + outline, outline, h - (outline * 2), Flux.DrawColor.a / 1.5)
+function Flux.Shapes.Border(x, y, w, h, outline, dontShade)
+    if not Flux.Shapes.EnableShadingBorders or dontShade then return surface.DrawOutlinedRect(x, y, w, h, outline) end
 
-    Flux.Shapes.Rectangle(x, h-outline, w, outline)
-    Flux.Shapes.Rectangle(x, 0, w, outline)
-    surface.SetDrawColor(0, 0, 0, Flux.DrawColor.a / 1.5)
+    local PreviousDrawColor = surface.GetDrawColor()
+    local DoubleOutlineSize = outline * 2
+    Flux.Shapes.Rectangle(x, y, outline, h)
+    Flux.Shapes.Rectangle(x + w - outline, y, outline, h)
+    Flux.Shapes.Rectangle(x + outline, y, w - DoubleOutlineSize, outline)
+    Flux.Shapes.Rectangle(x + outline, y + h - outline, w - DoubleOutlineSize, outline)
 
-    Flux.Shapes.Rectangle(x, h-outline, w, outline)
-    Flux.Shapes.Rectangle(x, 0, w, outline)
-    surface.SetDrawColor(Flux.DrawColor.r, Flux.DrawColor.g, Flux.DrawColor.b, Flux.DrawColor.a)
+    surface.SetDrawColor(0, 0, 0, PreviousDrawColor.a / 2)
+    Flux.Shapes.Rectangle(x, y + h - outline, w, outline)
+    Flux.Shapes.Rectangle(x, y, w, outline)
+    Flux.Shapes.Shade(x, y + outline, outline, h - DoubleOutlineSize, PreviousDrawColor.a / 2)
+    Flux.Shapes.Shade(x + w - outline, y + outline, outline, h - DoubleOutlineSize, PreviousDrawColor.a / 2)
+    surface.SetDrawColor(PreviousDrawColor.r, PreviousDrawColor.g, PreviousDrawColor.b, PreviousDrawColor.a)
 end
 
 function Flux.Shapes.Shade(x, y, w, h, alpha)
@@ -94,7 +138,6 @@ function Flux.Shapes.Scrollbar(scrollbar)
         surface.SetDrawColor(64, 64, 64, 200)
         Shapes.ShadedRect(2, 2, w - 4, h - 4)
     end
-
 end
 
 -- Hacky perforamnce boost: Only render the sphere(s) once, push it to the RT, and only render said RT

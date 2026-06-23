@@ -181,7 +181,7 @@ function Text.DoScroll(panel, x, y, w, h, stroke, ...)
             RetW, RetH = Text.Left(x - (TextW - w) * progress, y, ...)
         end
     render.SetScissorRect(0, 0, 0, 0, false)
-    return RetW, RetH
+    return math.min(w, RetW), RetH
 end
 
 function Text.Scroll(panel, x, y, w, h, stroke, ...)
