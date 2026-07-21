@@ -28,5 +28,8 @@ SharedInclude("flux/utility.lua")
 RecursiveInclude("flux/core", ClientInclude)
 RecursiveInclude("flux/elements", ClientInclude)
 
+resource.AddSingleFile("materials/fluxui/dropshadow_circle.png")
+resource.AddSingleFile("materials/fluxui/dropshadow_square.png")
+
 Flux.Initalized = true
 Flux.Print("Ready in " .. math.Round(SysTime() - Flux.StartTick, 2) .. " seconds.")
