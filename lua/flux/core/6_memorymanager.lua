@@ -2,7 +2,7 @@ local Memory = {}
 Flux.Memory = Memory
 
 Memory.Cache = {}
-Memory.DeletionTime = 5
+Memory.DeletionTime = 3
 
 function Memory.Push(index, ...)
     Memory.Cache[index] = Memory.Cache[index] or {}

@@ -3,6 +3,7 @@ Flux.Colors = {
     White = Color(255, 255, 255),
     DimWhite = Color(230, 230, 230),
     Gray = Color(185, 185, 185),
+    DimGray = Color(145, 145, 145),
     Black = Color(0, 0, 0),
 
     Red = Color(255, 25, 25),
@@ -28,6 +29,8 @@ Flux.Colors = {
 
     Hyperlink = Color(132, 132, 255),
     HyperlinkHover = Color(92, 92, 255),
+
+    TextHighlightColor = Color(186, 186, 255, 128)
 }
 
 Flux.Materials = {

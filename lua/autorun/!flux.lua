@@ -2,7 +2,7 @@ local Flux = {}
 _G.Flux = Flux
 Flux.StartTick = SysTime()
 Flux.Prefix = "flux-ui"
-Flux.Version = "1.2.0"
+Flux.Version = "1.5.0"
 
 -- Begin Initalization
 function Flux.Print(...) if not Flux.Developer then return end MsgC(Flux.Colors.White, "(", Flux.Colors.Accent, Flux.Prefix, Flux.Colors.White, ") ", ...) Msg('\n') end
@@ -27,9 +27,6 @@ SharedInclude("flux/config.lua")
 SharedInclude("flux/utility.lua")
 RecursiveInclude("flux/core", ClientInclude)
 RecursiveInclude("flux/elements", ClientInclude)
-
-resource.AddSingleFile("materials/fluxui/dropshadow_circle.png")
-resource.AddSingleFile("materials/fluxui/dropshadow_square.png")
 
 Flux.Initalized = true
 Flux.Print("Ready in " .. math.Round(SysTime() - Flux.StartTick, 2) .. " seconds.")

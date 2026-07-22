@@ -43,25 +43,25 @@ function Flux.Shapes.RoundedRect(x, y, w, h, roundness, topLeft, topRight, botto
     if topLeft == false then
         Flux.Shapes.Rectangle(x, y, calcRoundness, calcRoundness)
     else
-        surface.DrawTexturedRectUV(x, y, calcRoundness, calcRoundness, 0, 0, 1, 1 )
+        surface.DrawTexturedRectUV(x, y, calcRoundness, calcRoundness, 0, 0, 1, 1)
     end
 
     if topRight == false then
         Flux.Shapes.Rectangle(x + (w - calcRoundness), y, calcRoundness, calcRoundness)
     else
-        surface.DrawTexturedRectUV(x + (w - calcRoundness), y, calcRoundness, calcRoundness, 1, 0, 0, 1 )
+        surface.DrawTexturedRectUV(x + (w - calcRoundness), y, calcRoundness, calcRoundness, 1, 0, 0, 1)
     end
 
     if bottomLeft == false then
         Flux.Shapes.Rectangle(x, y + (h - calcRoundness), calcRoundness, calcRoundness)
     else
-        surface.DrawTexturedRectUV(x, y + (h - calcRoundness), calcRoundness, calcRoundness, 0, 1, 1, 0 )
+        surface.DrawTexturedRectUV(x, y + (h - calcRoundness), calcRoundness, calcRoundness, 0, 1, 1, 0)
     end
 
     if bottomRight == false then
         Flux.Shapes.Rectangle(x + (w - calcRoundness), y + (h - calcRoundness), calcRoundness, calcRoundness)
     else
-        surface.DrawTexturedRectUV(x + (w - calcRoundness), y + (h - calcRoundness), calcRoundness, calcRoundness, 1, 1, 0, 0 )
+        surface.DrawTexturedRectUV(x + (w - calcRoundness), y + (h - calcRoundness), calcRoundness, calcRoundness, 1, 1, 0, 0)
     end
 end
 
@@ -199,12 +199,12 @@ function Flux.Shapes.Circle(x, y, radius)
     surface.DrawTexturedRect(x - radius / 2, y - radius / 2, radius, radius)
 end
 
-local LastColor, LastAlpha
+local LastHColor, LastHAlpha
 function Flux.Shapes.HalfCircle(x, y, radius, rot)
     local Alpha, DrawColorVector = Flux.DrawColor.a / 255, Flux.Memory.PullOrPush(Flux.DrawColor.r .. Flux.DrawColor.g .. Flux.DrawColor.b, Vector(Flux.DrawColor.r / 255, Flux.DrawColor.g / 255, Flux.DrawColor.b / 255))
-    if LastColor ~= DrawColorVector then HalfCircleMaterial:SetVector("$color", DrawColorVector) end
-    if LastAlpha ~= Alpha then HalfCircleMaterial:SetFloat("$alpha", Alpha) end
-    LastAlpha, LastColor = Alpha, DrawColorVector
+    if LastHColor ~= DrawColorVector then HalfCircleMaterial:SetVector("$color", DrawColorVector) end
+    if LastHAlpha ~= Alpha then HalfCircleMaterial:SetFloat("$alpha", Alpha) end
+    LastHAlpha, LastHColor = Alpha, DrawColorVector
 
     surface.SetMaterial(HalfCircleMaterial)
     surface.DrawTexturedRectRotated(x, y, radius, radius, rot or 0)

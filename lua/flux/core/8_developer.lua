@@ -10,50 +10,88 @@ function Flux.ToggleDebugInterface(toggle)
         return
     end
 
-    local CachedMaterials = table.Count(Flux.Materials)
     Flux.Version = string.EndsWith(Flux.Version, "-debug") and Flux.Version or Flux.Version .. "-debug"
     Flux.Print("Creating the FluxUI-Debug interface")
+    local RenderTimeGraph, NextRenderTimeGraph = {}, 0
+    local MaxGraphHistory = 60
+    local NextElementCheckTime = 0
+    local VisibleElements, TotalElements = 0, 0
     hook.Add("DrawOverlay", "FluxUI-Debug", function()
         -- Draw Time
         if gui.IsGameUIVisible() then return end
 
-        -- Active Elements
-        local VisibleElements, TotalElements = 0, 0
-        for k, v in pairs(Flux.ActiveElements) do
-            if not v:IsValid() then table.remove(Flux.ActiveElements, k) continue end
-            if v:IsVisible() then VisibleElements = VisibleElements + 1 end
-            TotalElements = TotalElements + 1
+        -- Background
+        local Size = 325
+        Flux.RGB(0, 0, 0)
+        Flux.Gradient.Up(Flux.ScrW / 2 - Size / 2, Flux.ScrH - 25, Size, 32)
+
+        -- Watermark
+        surface.SetFont(Flux.Font(12, true))
+        Flux.Color(Flux.Colors.DimGray)
+        local _, VersionH = Flux.Text.Outline(Flux.Text.Center, Flux.ScrW / 2, Flux.ScrH - 12, 1, Flux.Version .. "@" .. Flux.ScrW .. "x" .. Flux.ScrH)
+        surface.SetFont(Flux.Font(15, true))
+        Flux.Color(Flux.Colors.Accent)
+        Flux.Text.Outline(Flux.Text.Center, Flux.ScrW / 2, Flux.ScrH - 14 - VersionH, 1, "FluxUI")
+        surface.SetFont(Flux.Font(13))
+
+        -- Rendertime
+        local RenderTime = math.Round(RealFrameTime(), 3) * 1000
+        local RenderTimeColor = RenderTime > 40 and Flux.Colors.Red or RenderTime > 15 and Flux.Colors.Orange or Flux.Colors.Gray
+        Flux.Color(RenderTimeColor, RenderTime < 15 and 0 or 255)
+        Flux.Gradient.Up(Flux.ScrW / 2 + Size / 2 - 6 - 75, Flux.ScrH - 8, 75, 16)
+        Flux.Color(RenderTimeColor)
+        Flux.Text.Outline(Flux.Text.Right, Flux.ScrW / 2 + Size / 2 - 8, Flux.ScrH - 13, 1, RenderTime .. "ms", Flux.Colors.Gray, " render")
+        if NextRenderTimeGraph < SysTime() then
+            NextRenderTimeGraph = SysTime() + 0.025
+            table.insert(RenderTimeGraph, 1, RenderTime)
+            table.remove(RenderTimeGraph, MaxGraphHistory)
         end
 
-        -- Variables
-        local R,G,B,A = Flux.DrawColor.r, Flux.DrawColor.g, Flux.DrawColor.b, Flux.DrawColor.a
-        local DrawTime = math.Round(RealFrameTime(), 3) * 1000
-        local VersionStr = Flux.Version .. "@" .. Flux.ScrW .. "x" .. Flux.ScrH
+        -- Graph
+        local GraphStart = Flux.ScrW / 2 + Size / 2
+        local LastX, LastY
+        local HighestValue = 0
+        for k, v in ipairs(RenderTimeGraph) do
+            local CurrentColor = Flux.Colors.Green:Lerp(Flux.Colors.Red, math.Clamp((v - 10) / 30, 0, 1))
+            Flux.Color(CurrentColor, 255 * (1 - math.Clamp(k / MaxGraphHistory, 0, 1)))
+            local X, Y = GraphStart - (k * 2), Flux.ScrH - 18 - v
+            if k == 1 then Flux.Shapes.Rectangle(X - 1, Y - 1, 2, 2) end
+            if LastX then surface.DrawLine(LastX, LastY, X, Y) end
+            LastX, LastY = X, Y
+            HighestValue = math.max(HighestValue, v)
+        end
+        Flux.Color(HighestValue > 40 and Flux.Colors.Red or HighestValue > 15 and Flux.Colors.Orange or Flux.Colors.Gray, HighestValue > 15 and 175 or 110)
+        Flux.Text.Outline(Flux.Text.Left, GraphStart + 6, Flux.ScrH - 9 - 15 - HighestValue, 1, HighestValue .. "ms")
 
-        -- DrawColor and OutlineColor
-        surface.SetDrawColor(0, 0, 0, 225)
-        surface.DrawRect(2, Flux.ScrH - 10 - 4, 18, 12)
-        surface.SetDrawColor(R,G,B,A)
-        surface.DrawRect(4, Flux.ScrH - 10 - 2, 8, 8)
-        surface.SetDrawColor(Flux.OutlineDrawColor.r, Flux.OutlineDrawColor.g, Flux.OutlineDrawColor.b, Flux.OutlineDrawColor.a)
-        surface.DrawRect(14, Flux.ScrH - 10 - 2, 4, 8)
-
-        -- Text
-        surface.SetFont(Flux.Font(13, true))
-        Flux.RGB(255,255,255,175)
-        local TextW, TextH = Flux.Text.Outline(Flux.Text.Left, 24, Flux.ScrH - 14, 1,
-            "(", Flux.Colors.Accent, Flux.Prefix, Flux.Colors.White, " ", VersionStr, ")", Flux.Colors.Gray,
-            " ", CachedMaterials .. " cached material(s)", " | ", VisibleElements .. "/" .. TotalElements .. " elements", " | ",
-            DrawTime > 40 and Flux.Colors.Red or DrawTime > 15 and Flux.Colors.Orange or Flux.Colors.Gray, DrawTime, "ms", Flux.Colors.Gray, " render time"
-        )
-        surface.SetDrawColor(Flux.Colors.Accent.r, Flux.Colors.Accent.g, Flux.Colors.Accent.b, 200)
-        surface.DrawRect(2, Flux.ScrH - 1, TextW + 24, 1)
+        -- Active Elements
+        if NextElementCheckTime < SysTime() then
+            NextElementCheckTime = SysTime() + 0.1
+            VisibleElements, TotalElements = 0, 0
+            for k, v in pairs(Flux.ActiveElements) do
+                if not v:IsValid() then table.remove(Flux.ActiveElements, k) continue end
+                local CurrentElement, Visible = v, true
+                while CurrentElement do
+                    if IsValid(CurrentElement:GetParent()) then
+                        Visible = CurrentElement:IsVisible()
+                        CurrentElement = CurrentElement:GetParent()
+                    else
+                        Visible = CurrentElement:IsVisible()
+                        break
+                    end
+                    if not Visible then break end
+                end
+                VisibleElements = VisibleElements + (Visible and 1 or 0)
+                TotalElements = TotalElements + 1
+            end
+        end
+        Flux.Color(Flux.Colors.Gray)
+        Flux.Text.Outline(Flux.Text.Left, Flux.ScrW / 2 - Size / 2 + 8, Flux.ScrH - 13, 1, VisibleElements .. "/" .. TotalElements .. " objects")
 
         -- Initalization
         if not Flux.Initalized then
             surface.SetFont(Flux.Font(16, true))
             Flux.RGB(150 + math.sin(SysTime() * 5) * 75, 0, 0, 200)
-            Flux.Text.Outline(Flux.Text.Left, 2, Flux.ScrH - 20 - TextH, 2, "[ERROR] FluxUI did not initalize properly! This should never happen, please check console!")
+            Flux.Text.Outline(Flux.Text.Left, 2, Flux.ScrH - 17, 2, "[ERROR] FluxUI did not initalize properly! This should never happen, please check console!")
         end
 
         Flux.RGB(R,G,B,A)
