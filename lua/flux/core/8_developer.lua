@@ -20,6 +20,13 @@ function Flux.ToggleDebugInterface(toggle)
         -- Draw Time
         if gui.IsGameUIVisible() then return end
 
+        -- Initalization
+        if not Flux.Initalized then
+            surface.SetFont(Flux.Font(16, true))
+            Flux.RGB(150 + math.sin(SysTime() * 5) * 75, 0, 0, 200)
+            Flux.Text.Outline(Flux.Text.Center, Flux.ScrW / 2, Flux.ScrH - 100, 2, "FluxUI failed to initalize, please check console")
+        end
+
         -- Background
         local Size = 325
         Flux.RGB(0, 0, 0)
@@ -84,15 +91,18 @@ function Flux.ToggleDebugInterface(toggle)
                 TotalElements = TotalElements + 1
             end
         end
-        Flux.Color(Flux.Colors.Gray)
-        Flux.Text.Outline(Flux.Text.Left, Flux.ScrW / 2 - Size / 2 + 8, Flux.ScrH - 13, 1, VisibleElements .. "/" .. TotalElements .. " objects")
 
-        -- Initalization
-        if not Flux.Initalized then
-            surface.SetFont(Flux.Font(16, true))
-            Flux.RGB(150 + math.sin(SysTime() * 5) * 75, 0, 0, 200)
-            Flux.Text.Outline(Flux.Text.Left, 2, Flux.ScrH - 17, 2, "[ERROR] FluxUI did not initalize properly! This should never happen, please check console!")
-        end
+        local LeftX = Flux.ScrW / 2 - Size / 2 + 8
+        Flux.Color(Flux.Colors.Gray)
+        Flux.Text.Outline(Flux.Text.Left, LeftX, Flux.ScrH - 13, 1, VisibleElements .. "/" .. TotalElements .. " objects")
+
+
+        surface.SetFont(Flux.Font(12))
+        Flux.Color(Flux.DrawColor)
+        Flux.Text.Outline(Flux.Text.Left, LeftX, Flux.ScrH - 13 - 12, 1, "DrawColor")
+        surface.SetFont(Flux.Font(10))
+        Flux.Color(Flux.OutlineDrawColor)
+        Flux.Text.Outline(Flux.Text.Left, LeftX, Flux.ScrH - 13 - 12 - 10, 1, "OutlineDrawColor")
 
         Flux.RGB(R,G,B,A)
     end)
