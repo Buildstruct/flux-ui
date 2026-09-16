@@ -1,6 +1,5 @@
 local Utility = {}
-Flux.Utility = Utility
-Flux.Util = Utility
+FluxUI.Utility = Utility
 
 function Utility.ConvertRainbow(freq, ...)
     local tbl = {...}

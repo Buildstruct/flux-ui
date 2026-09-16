@@ -1,3 +1,4 @@
+if true then return end
 local Text = {}
 Flux.Text = Text
 
