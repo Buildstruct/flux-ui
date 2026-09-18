@@ -37,6 +37,10 @@ FluxUI.Colors = {
     Magenta         = Color(255, 64, 249),
 
     -- Elements
+    Frame = {
+        Background = Color(40, 40, 40, 230),
+        Outline = Color(75, 75, 75)
+    },
     Dropdown = {
         Background  = Color(45, 45, 45, 220),
         Outline     = Color(24, 24, 24, 240)
