@@ -4,8 +4,8 @@ FluxUI.Translation = Translation
 function Translation.Scale(scale, w, h, x, y)
     if not scale then
         cam.PopModelMatrix()
-		render.PopFilterMag()
-		return render.PopFilterMin()
+        render.PopFilterMag()
+        return render.PopFilterMin()
     end
 
     local state = surface.GetPanelPaintState()
@@ -22,20 +22,20 @@ function Translation.Scale(scale, w, h, x, y)
         matrix:Translate(center)
         matrix:SetScale(Vector(scale, scale, scale))
         matrix:Translate(-center)
-    else 
+    else
         matrix = FluxUI.Memory.Pull(memoryID)[1]
     end
 
-	render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-	render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-	cam.PushModelMatrix(matrix, true)
+    render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+    render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+    cam.PushModelMatrix(matrix, true)
 end
 
 function Translation.Rotation(angle, w, h, x, y)
     if not angle then
         cam.PopModelMatrix()
-		render.PopFilterMag()
-		return render.PopFilterMin()
+        render.PopFilterMag()
+        return render.PopFilterMin()
     end
 
     local state = surface.GetPanelPaintState()
@@ -52,11 +52,11 @@ function Translation.Rotation(angle, w, h, x, y)
         matrix:Translate(center)
         matrix:SetAngles(Angle(0, angle, 0))
         matrix:Translate(-center)
-    else 
+    else
         matrix = FluxUI.Memory.Pull(memoryID)[1]
     end
 
-	render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-	render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-	cam.PushModelMatrix(matrix, true)
+    render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+    render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+    cam.PushModelMatrix(matrix, true)
 end

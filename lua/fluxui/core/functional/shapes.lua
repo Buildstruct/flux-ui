@@ -53,7 +53,7 @@ end
 
 function Shapes.ShadedRect(x, y, w, h, ignoreAlpha)
     Shapes.Rectangle(x, y, w, h)
-    Shapes.Shade(x, y, w, h, not ignoreAlpha and FluxUI.DrawColor.a or nil)
+    Shapes.Shade(x, y, w, h, not ignoreAlpha and FluxUI.DrawColor.a / 1.25 or nil)
     surface.SetDrawColor(FluxUI.DrawColor.r, FluxUI.DrawColor.g, FluxUI.DrawColor.b, FluxUI.DrawColor.a)
 end
 
@@ -61,7 +61,7 @@ end
 function Shapes.Border(x, y, w, h, stroke, forceNoShade)
     if forceNoShade or not Shapes.BordersShaded then return surface.DrawOutlinedRect(x, y, w, h, stroke) end
     stroke = stroke or 1
-    
+
     local oldDrawColor = surface.GetDrawColor()
     multipliedStroke = stroke * 2
     Shapes.Rectangle(x, y, stroke, h)
@@ -77,7 +77,6 @@ function Shapes.Border(x, y, w, h, stroke, forceNoShade)
 end
 
 -- Circles
-local CircleMeshes = {}
 local DefaultSegments, DefaultCircAmount = 36, 1
 function FluxUI.GenerateCircle(segments, amount)
     local vertices, circleMesh = {}, Mesh()
@@ -102,7 +101,7 @@ function FluxUI.Shapes.Circle(x, y, radius, segments, amount)
     amount = amount or DefaultCircAmount
     if radius <= 0 or segments <= 0 or amount <= 0 then return end  -- it could cause a lag spike when we have to start drawing a special circle. oh well
     local circleMesh = FluxUI.Memory.PullFunctionUnpacked("Circ:" .. segments .. amount, FluxUI.GenerateCircle, segments, amount)
-    
+
     render.SetColorMaterial()
     cam.Start2D()
         CircleMatrix:SetTranslation(Vector(x, y, 0))
