@@ -12,7 +12,7 @@ end
 function FluxUI.Color(col, alpha, outline)
     local DrawTable = (outline and outline == true) and FluxUI.OutlineColor or FluxUI.DrawColor
     DrawTable.r, DrawTable.g, DrawTable.b = col.r or 255, col.g or 255, col.b or 255
-    DrawTable.a = col.a * ((alpha or 255) / 255) -- weird equation but it works
+    DrawTable.a = (col.a or 255) * ((alpha or 255) / 255) -- weird equation but it works
     surface.SetTextColor(DrawTable.r, DrawTable.g, DrawTable.b, DrawTable.a)
     surface.SetDrawColor(DrawTable.r, DrawTable.g, DrawTable.b, DrawTable.a)
 end

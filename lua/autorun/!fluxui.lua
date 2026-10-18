@@ -3,7 +3,7 @@ local FluxUI = {}
 _G.FluxUI = FluxUI
 FluxUI.StartTick = SysTime()
 FluxUI.Prefix = "FluxUI"
-FluxUI.Version = "2.0.0"
+FluxUI.Version = "2.0.0-indev.6"
 
 -- Baseline Variables
 FluxUI.White = Color(255, 255, 255)
