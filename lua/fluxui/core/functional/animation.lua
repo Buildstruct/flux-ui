@@ -57,7 +57,7 @@ for k, v in pairs(Animations) do
     end
 end
 
-hook.Add("DrawOverlay", "FluxUI:HandleAnimations", function()
+hook.Add("DrawOverlay", "zen.fluxui.derma_animations", function()
     local ST = SysTime()
     for k, v in ipairs(Animation.Interfaces.Panels) do
         if not v or not IsValid(v) or not v._FluxUIAnimations then

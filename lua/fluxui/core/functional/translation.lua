@@ -31,6 +31,34 @@ function Translation.Scale(scale, w, h, x, y)
     cam.PushModelMatrix(matrix, true)
 end
 
+function Translation.Translate(byx, byy, w, h, x, y)
+    if not byx and not byy then
+        cam.PopModelMatrix()
+        render.PopFilterMag()
+        return render.PopFilterMin()
+    end
+
+    local state = surface.GetPanelPaintState()
+    x = x or state.translate_x
+    y = y or state.translate_y
+    w = w or state.scissor_right - state.scissor_left or FluxUI.ScrW
+    h = h or state.scissor_bottom - state.scissor_top or FluxUI.ScrH
+
+    local matrix
+    local memoryID = "translateMatrix:" .. byx .. byy .. w .. h .. x .. y
+    if not FluxUI.Memory.Exists(memoryID) then
+        local vec = Vector(byx, byy, 0)
+        matrix = FluxUI.Memory.Push(memoryID, Matrix())[1]
+        matrix:Translate(vec)
+    else
+        matrix = FluxUI.Memory.Pull(memoryID)[1]
+    end
+
+    render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+    render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+    cam.PushModelMatrix(matrix, true)
+end
+
 function Translation.Rotation(angle, w, h, x, y)
     if not angle then
         cam.PopModelMatrix()

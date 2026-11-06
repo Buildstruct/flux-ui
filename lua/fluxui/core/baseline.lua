@@ -122,7 +122,7 @@ function Memory.PullFunction(index, func, ...)
         local length = select("#", ...)
         Memory.Cache[index].FuncSet = Memory.Cache[index].FuncSet or {...}
         local Difference = false
-        if length ~= #Memory.Cache[index].FuncSet then chat.AddText("FUCK") Difference = true end
+        if length ~= #Memory.Cache[index].FuncSet then Difference = true end
         if not Difference then
             for k = 1, length do
                 if select(k, ...) == Memory.Cache[index].FuncSet[k] then continue end

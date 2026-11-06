@@ -6,7 +6,7 @@ local DeveloperConVar = CreateClientConVar("fluxui_developer", "0", true, false,
 function FluxUI.DeveloperInterface(toggle)
     if not toggle then
         FluxUI.Print("Disabling FluxUI Developer Interface")
-        return hook.Remove("DrawOverlay", "FluxUI:DeveloperUI")
+        return hook.Remove("DrawOverlay", "zen.fluxui.developerui")
     end
 
     FluxUI.Version = string.EndsWith(FluxUI.Version, ".dev") and FluxUI.Version or FluxUI.Version .. ".dev"
@@ -14,7 +14,7 @@ function FluxUI.DeveloperInterface(toggle)
 
     local RTGraph, NextRTGraph, GraphHistory = {}, 0, 60
     local Elements, TotalElements, NextElementCheck = 0, 0, 0
-    hook.Add("DrawOverlay", "FluxUI:DeveloperUI", function()
+    hook.Add("DrawOverlay", "zen.fluxui.developerui", function()
         if gui.IsGameUIVisible() then return end
 
         if not FluxUI.Initalized then

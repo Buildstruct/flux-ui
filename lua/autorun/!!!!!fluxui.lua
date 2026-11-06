@@ -3,7 +3,7 @@ local FluxUI = {}
 _G.FluxUI = FluxUI
 FluxUI.StartTick = SysTime()
 FluxUI.Prefix = "FluxUI"
-FluxUI.Version = "2.0.0-indev.6"
+FluxUI.Version = "2.0.0-indev.7"
 
 -- Baseline Variables
 FluxUI.White = Color(255, 255, 255)
@@ -29,7 +29,7 @@ local function includeRecursive(path)
     for k, v in pairs(dirs) do includeRecursive(path .. "/" .. v) end
 end
 includeRecursive("fluxui/core")
---includeRecursive("fluxui/elements")
+includeRecursive("fluxui/elements")
 
 FluxUI.Initalized = true
 FluxUI.Print("Ready in " .. math.Round(SysTime() - FluxUI.StartTick, 2) .. " seconds.")

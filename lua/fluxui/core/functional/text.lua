@@ -156,3 +156,54 @@ function Text.Outline(func, x, y, stroke, ...)
     surface.SetTextColor(FluxUI.DrawColor.r, FluxUI.DrawColor.g, FluxUI.DrawColor.b, FluxUI.DrawColor.a)
     return func(x, y, ...)
 end
+
+--[[
+maybe for scroling i could do something similar to Text.Outline
+
+    e.g. Text.Scroll(Text.Center, ...) would replace the below ScrollCenter,
+    it would use that as its anchor point so if you do Text.Right, it'd go left, then right
+    Text.Left left to right
+    Text.Center,,,, probably.. jst...... right... and then left 
+
+from fluxui 1.0.0
+function Text.DoScroll(panel, x, y, w, h, stroke, ...)
+    local TextW, TextH = Text.GetTextSize(...)
+    local screenx, screeny = x, y
+    if panel and panel:IsValid() then
+        screenx, screeny = panel:LocalToScreen(x, y)
+    end
+    local RetW, RetH
+    local StartTime = Flux.Memory.PullOrPush(x .. y .. w .. h .. TextW .. TextH .. Text.MemoryIdentifier(), SysTime())
+    render.SetScissorRect(screenx, screeny, screenx + w, screeny + h, true)
+        local progress = math.ease.InOutSine(1-math.Clamp((math.abs(((SysTime() - StartTime) % 20) / (20 / 2) - 1) * 2) - 0.5, 0, 1))
+        if stroke and stroke >= 1 then
+            RetW, RetH = Text.Outline(Text.Left, x - (TextW - w) * progress, y, stroke, ...)
+        else
+            RetW, RetH = Text.Left(x - (TextW - w) * progress, y, ...)
+        end
+    render.SetScissorRect(0, 0, 0, 0, false)
+    return math.min(w, RetW), RetH
+end
+
+function Text.Scroll(panel, x, y, w, h, stroke, ...)
+    local TextW = Text.GetTextSize(...)
+    if TextW < w then
+        if stroke and stroke >= 1 then
+            return Text.Outline(Text.Left, x, y, stroke, ...)
+        end
+        return Text.Left(x, y, ...)
+    end
+    return Text.DoScroll(panel, x, y, w, h, stroke, ...)
+end
+
+function Text.ScrollCenter(panel, x, y, w, h, stroke, ...)
+    local TextW = Text.GetTextSize(...)
+    if TextW < w then
+        if stroke and stroke >= 1 then
+            return Text.Outline(Text.Center, x + w / 2, y, stroke, ...)
+        end
+        return Text.Center(x + w / 2, y, ...)
+    end
+    return Text.DoScroll(panel, x, y, w, h, stroke, ...)
+end
+]]

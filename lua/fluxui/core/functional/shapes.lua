@@ -45,7 +45,7 @@ end
 function Shapes.Shade(x, y, w, h, alpha)
     surface.SetDrawColor(0, 0, 0, alpha or 180)
     surface.SetMaterial(FluxUI.Materials.Gradient.Down)
-    surface.DrawTexturedRect(x, y + (h / 2), w, h / 2)
+    surface.DrawTexturedRect(x, y + (h / 2) + 1, w, h / 2)
     surface.SetMaterial(FluxUI.Materials.Gradient.Up)
     surface.DrawTexturedRect(x, y, w, h / 3)
     surface.SetDrawColor(FluxUI.DrawColor.r, FluxUI.DrawColor.g, FluxUI.DrawColor.b, FluxUI.DrawColor.a)

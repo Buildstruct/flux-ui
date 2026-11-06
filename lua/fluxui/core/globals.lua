@@ -6,7 +6,7 @@ FluxUI.ActiveElements = {}
 
 -- Resolution
 FluxUI.ScrW, FluxUI.ScrH = ScrW(), ScrH()
-hook.Add("OnScreenSizeChanged", "FluxUI:ScreenResolution", function()
+hook.Add("OnScreenSizeChanged", "zen.fluxui.screenresolution", function()
     FluxUI.ScrW, FluxUI.ScrH = ScrW(), ScrH()
     FluxUI.Print("Screen Resolution was modified, new resolution: " .. FluxUI.ScrW .. "x" .. FluxUI.ScrH)
 end)
@@ -42,6 +42,10 @@ FluxUI.Colors = {
         Outline = Color(75, 75, 75)
     },
     Dropdown = {
+        Background  = Color(45, 45, 45, 220),
+        Outline     = Color(24, 24, 24, 240)
+    },
+    Scrollbar = {
         Background  = Color(45, 45, 45, 220),
         Outline     = Color(24, 24, 24, 240)
     },
