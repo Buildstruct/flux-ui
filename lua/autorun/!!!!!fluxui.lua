@@ -1,9 +1,9 @@
--- FluxUI, a open sourced UI component library, authored by phys STEAM_0:0:24262296
+-- FluxUI, a open sourced UI component library, authored by zee STEAM_0:0:24262296
 local FluxUI = {}
 _G.FluxUI = FluxUI
 FluxUI.StartTick = SysTime()
 FluxUI.Prefix = "FluxUI"
-FluxUI.Version = "2.0.0-indev.8"
+FluxUI.Version = "2.0.0-indev.9"
 
 -- Baseline Variables
 FluxUI.White = Color(255, 255, 255)

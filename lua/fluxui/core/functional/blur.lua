@@ -2,6 +2,7 @@ local Blur = {}
 FluxUI.Blur = Blur
 
 local Experimental = {}
+local DrawTexturedUVFunc = surface.DrawTexturedRectRawUV or surface.DrawTexturedRectUV
 Blur.Experimental = Experimental
 
 Blur.NoiseSize = 175
@@ -21,7 +22,7 @@ function Blur.Noise(x, y, w, h, alpha)
     if not Blur.NoiseEnabled then return end
     surface.SetMaterial(FluxUI.Materials.Noise)
     surface.SetDrawColor(190, 190, 190, alpha or 28)
-    surface.DrawTexturedRectRawUV(x, y, w, h, 0, 0, w / Blur.NoiseSize, h / Blur.NoiseSize)
+    DrawTexturedUVFunc(x, y, w, h, 0, 0, w / Blur.NoiseSize, h / Blur.NoiseSize)
 end
 
 -- Experimental Blurring, i want this to be based off of how hyprland and niri (wm) do thier blurring. it gets the screen and drwas it at low resolutions.
@@ -51,7 +52,7 @@ local function Blit(rt, w, h, base)
         cam.Start2D()
             surface.SetMaterial(Experimental.BlurBlitMaterial)
             surface.SetDrawColor(255, 255, 255, 255)
-            surface.DrawTexturedRectRawUV(0, 0, w, h, 0, 0, 1, 1)
+            DrawTexturedUVFunc(0, 0, w, h, 0, 0, 1, 1)
         cam.End2D()
         render.OverrideAlphaWriteEnable(false)
     render.PopRenderTarget()
@@ -67,7 +68,7 @@ local function KawasePass(rt, w, h, lastRT, lastW, lastH)
             for i = 1, 4 do
                 local x, y = (i % 2 == 1) and -U or U, (i <= 2) and -V or V
                 surface.SetDrawColor(255, 255, 255, 255 / i)
-                surface.DrawTexturedRectRawUV(0, 0, w, h, x, y, 1 + x, 1 + y)
+                DrawTexturedUVFunc(0, 0, w, h, x, y, 1 + x, 1 + y)
             end
         cam.End2D()
         render.OverrideAlphaWriteEnable(false)
@@ -101,7 +102,7 @@ function Experimental.Panel(panel, passes, alpha, noise, darken, refresh)
     darken = darken and 255 * (1 - darken) or 255
     surface.SetMaterial(Experimental.Prepare(passes or 3, true))
     surface.SetDrawColor(darken, darken, darken, (alpha or 255) * alphaMultiplier)
-    surface.DrawTexturedRectRawUV(-PaintState.translate_x, -PaintState.translate_y, FluxUI.ScrW, FluxUI.ScrH, 0, 0, 1, 1)
+    DrawTexturedUVFunc(-PaintState.translate_x, -PaintState.translate_y, FluxUI.ScrW, FluxUI.ScrH, 0, 0, 1, 1)
     if noise ~= false then Blur.Noise(0, 0, panel:GetWide(), panel:GetTall(), ((alpha or 255) / 12) * alphaMultiplier) end
 
     surface.SetDrawColor(FluxUI.DrawColor.r, FluxUI.DrawColor.g, FluxUI.DrawColor.b, FluxUI.DrawColor.a)
@@ -114,7 +115,7 @@ function Experimental.Section(x, y, w, h, passes, alpha, noise, darken, refresh)
     darken = darken and 255 * (1 - darken) or 255
     surface.SetMaterial(Experimental.Prepare(passes or 3, refresh))
     surface.SetDrawColor(darken, darken, darken, (alpha or 255) * alphaMultiplier)
-    surface.DrawTexturedRectRawUV(x, y, w, h, x / FluxUI.ScrW, y / FluxUI.ScrH, (x + w) / FluxUI.ScrW, (y + h) / FluxUI.ScrH)
+    DrawTexturedUVFunc(x, y, w, h, x / FluxUI.ScrW, y / FluxUI.ScrH, (x + w) / FluxUI.ScrW, (y + h) / FluxUI.ScrH)
     if noise ~= false then Blur.Noise(x, y, w, h, ((alpha or 255) / 200) * alphaMultiplier) end
 
     surface.SetDrawColor(FluxUI.DrawColor.r, FluxUI.DrawColor.g, FluxUI.DrawColor.b, FluxUI.DrawColor.a)
