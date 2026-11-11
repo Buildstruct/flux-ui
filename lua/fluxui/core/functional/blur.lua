@@ -40,7 +40,6 @@ local function Generate(passes)
     RTCache.Material = CreateMaterial("FluxUI_BlurExp_Static" .. passes .. FluxUI.ScreenTag, "UnlitGeneric", {["$basetexture"] = "color/white", ["$ignorez"] = 1, ["$vertexcolor"] = 1, ["$vertexalpha"] = 1})
     RTCache.Material:SetTexture("$basetexture", RTCache[1].RenderTarget)
     Experimental.Cached[passes] = RTCache
-    chat.AddText("GENERATED")
     return RTCache
 end
 
