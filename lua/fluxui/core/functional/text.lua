@@ -10,7 +10,7 @@ function Text.Lower(...)
         if not isstring(v) then continue end
         vargs[i] = string.lower(v)
     end
-    return vargs
+    return unpack(vargs)
 end
 function Text.Upper(...)
     local vargs = {...}
@@ -19,7 +19,7 @@ function Text.Upper(...)
         if not isstring(v) then continue end
         vargs[i] = string.upper(v)
     end
-    return vargs
+    return unpack(vargs)
 end
 
 function Text.ToString(...)

@@ -1,7 +1,5 @@
-local Elements = Flux.Elements
 local SubmenuMousePadding = 6
-
-function Elements.DropdownPanel(button, callback, belowButton)
+function FluxUI.Elements.DropdownPanel(button, callback, belowButton)
     local Dropdown = vgui.Create("DPanel")
     Dropdown.DistanceToClose = 175
     Dropdown.Paint = nil
@@ -62,16 +60,16 @@ function Elements.DropdownPanel(button, callback, belowButton)
     Container:SetSize(Dropdown:GetSize())
     function Container:Paint(w, h)
         local ZeroY = h * math.ease.InExpo(1-Dropdown.Lerp)
-        Flux.Blur.Panel(self)
-        Flux.Color(Flux.Colors.DropdownBackground)
-        Flux.Shapes.ShadedRect(0, ZeroY, w, h)
+        FluxUI.Blur.Panel(self)
+        FluxUI.Color(FluxUI.Colors.Dropdown.Background)
+        FluxUI.Shapes.ShadedRect(0, ZeroY, w, h)
     end
     function Container:PaintOver(w, h)
         local ZeroY = h * math.ease.InExpo(1-Dropdown.Lerp)
-        Flux.Color(Flux.Colors.DropdownOutline)
-        Flux.Shapes.Border(0, ZeroY, w, h, 2)
-        Flux.Color(Flux.Colors.DropdownOutline, 200)
-        Flux.Shapes.Border(2, 2 + ZeroY, w-4, h-4, 2)
+        FluxUI.Color(FluxUI.Colors.Dropdown.Outline)
+        FluxUI.Shapes.Border(0, ZeroY, w, h, 2)
+        FluxUI.Color(FluxUI.Colors.Dropdown.Outline, 200)
+        FluxUI.Shapes.Border(2, 2 + ZeroY, w-4, h-4, 2)
     end
     function Container:PerformLayout() Dropdown:SetSize(Dropdown:GetTargetSize()) end
     function Container:OnChildAdded(child)
@@ -105,8 +103,8 @@ function Elements.DropdownPanel(button, callback, belowButton)
         Frame:SetTall(6)
         Frame:Dock(TOP)
         function Frame:Paint(w, h)
-            Flux.Color(Flux.Colors.DropdownOutline)
-            Flux.Shapes.ShadedRect(0,2,w,h-4)
+            FluxUI.Color(FluxUI.Colors.Dropdown.Outline)
+            FluxUI.Shapes.ShadedRect(0,2,w,h-4)
         end
     end
     Dropdown.AddSpacer = Container.AddSpacer
@@ -117,15 +115,15 @@ function Elements.DropdownPanel(button, callback, belowButton)
         if belowButton and IsValid(button) then
             local ButtonX, ButtonY = button:LocalToScreen(0, button:GetTall())
             local TargetX, TargetY = ButtonX, ButtonY
-            TargetX = ((TargetX + self:GetWide()) > Flux.ScrW and (Flux.ScrW - self:GetWide())) or (TargetX < 0 and 0) or TargetX
-            TargetY = ((TargetY + self:GetTall()) > Flux.ScrH and (Flux.ScrH - self:GetTall())) or (TargetY < 0 and 0) or TargetY
+            TargetX = ((TargetX + self:GetWide()) > FluxUI.ScrW and (FluxUI.ScrW - self:GetWide())) or (TargetX < 0 and 0) or TargetX
+            TargetY = ((TargetY + self:GetTall()) > FluxUI.ScrH and (FluxUI.ScrH - self:GetTall())) or (TargetY < 0 and 0) or TargetY
             return Dropdown:SetPos(TargetX, TargetY)
         end
 
         -- Normal (mouse)
         local TargetX, TargetY = self.OpenX, self.OpenY
-        TargetX = ((TargetX + self:GetWide()) > Flux.ScrW and (Flux.ScrW - self:GetWide())) or (TargetX < 0 and 0) or TargetX
-        TargetY = ((TargetY + self:GetTall()) > Flux.ScrH and (Flux.ScrH - self:GetTall())) or (TargetY < 0 and 0) or TargetY
+        TargetX = ((TargetX + self:GetWide()) > FluxUI.ScrW and (FluxUI.ScrW - self:GetWide())) or (TargetX < 0 and 0) or TargetX
+        TargetY = ((TargetY + self:GetTall()) > FluxUI.ScrH and (FluxUI.ScrH - self:GetTall())) or (TargetY < 0 and 0) or TargetY
         return Dropdown:SetPos(TargetX, TargetY)
     end
 
@@ -134,29 +132,29 @@ function Elements.DropdownPanel(button, callback, belowButton)
     Dropdown:SetSize(targetW, targetH)
     Dropdown:PerformPosition()
     if callback and isfunction(callback) then callback(Dropdown, Container) end
-    table.insert(Flux.ActiveElements, Dropdown)
+    table.insert(FluxUI.ActiveElements, Dropdown)
     return Dropdown
 end
 
-function Elements.DropdownSubMenu(parent, callback, ...)
-    local SubmenuButton = Flux.Derma.Button(parent, callback, ...)
+function FluxUI.Elements.DropdownSubMenu(parent, callback, ...)
+    local SubmenuButton = FluxUI.Derma.Button(parent, callback, ...)
     function SubmenuButton:Paint(w, h)
-        Flux.Blur.Panel(self)
-        Flux.Color(Flux.Utility.ConvertRainbow(self.Color))
-        Flux.Shapes.Rectangle(0, 0, w, h)
-        Flux.Color(Flux.Utility.ConvertRainbow(self.OutlineColor))
-        Flux.Shapes.Border(0, 0, w, h, 2)
+        FluxUI.Blur.Panel(self)
+        FluxUI.Color(FluxUI.Utility.ConvertRainbow(self.Color))
+        FluxUI.Shapes.Rectangle(0, 0, w, h)
+        FluxUI.Color(FluxUI.Utility.ConvertRainbow(self.OutlineColor))
+        FluxUI.Shapes.Border(0, 0, w, h, 2)
 
         local ButtonHovered = self:IsHovered()
-        Flux.Shapes.Shade(0, 0, w, h, ButtonHovered and 240 or 165)
+        FluxUI.Shapes.Shade(0, 0, w, h, ButtonHovered and 240 or 165)
 
         -- SubMenu
-        Flux.RGB(Flux.Utility.ConvertRainbow(self.OutlineColor), 200)
-        Flux.Gradient.Left(w / 2, 0, w / 2, h)
+        FluxUI.RGB(FluxUI.Utility.ConvertRainbow(self.OutlineColor), 200)
+        FluxUI.Gradient.Left(w / 2, 0, w / 2, h)
 
-        Flux.Color(Flux.Utility.ConvertRainbow(self.TextColor), ButtonHovered and 255 or 190)
+        FluxUI.Color(FluxUI.Utility.ConvertRainbow(self.TextColor), ButtonHovered and 255 or 190)
         surface.SetFont(self.Font)
-        local _, textHeight = Flux.Text.Center((w / 2) + (self.Icon and (h-12) / 2 + 3 or 0) - 2, (h / 2) - self.TextH / 2, unpack(self.Content))
+        local _, textHeight = FluxUI.Text.Center((w / 2) + (self.Icon and (h-12) / 2 + 3 or 0) - 2, (h / 2) - self.TextH / 2, unpack(self.Content))
         if self.Icon then
             surface.SetDrawColor(255, 255, 255, ButtonHovered and 245 or 190)
             surface.SetMaterial(self.Icon)
@@ -170,9 +168,9 @@ function Elements.DropdownSubMenu(parent, callback, ...)
         end
 
         -- Submenu icon
-        Flux.RGB(255, 255, 255)
-        surface.SetFont(Flux.Font(11, true))
-        Flux.Text.Outline(Flux.Text.Right, w - 5, h / 2 - textHeight / 2 + 1, 1, ">")
+        FluxUI.RGB(255, 255, 255)
+        surface.SetFont(FluxUI.Font(11, true))
+        FluxUI.Text.Outline(FluxUI.Text.Right, w - 5, h / 2 - textHeight / 2 + 1, 1, ">")
     end
     SubmenuButton.IsSubmenu = true
     SubmenuButton:SetCursor("arrow")
@@ -194,7 +192,7 @@ function Elements.DropdownSubMenu(parent, callback, ...)
 
         local X, Y = self:LocalToScreen(self:GetWide() + 4, 0)
         local W, H = self.Dropdown:GetTargetSize()
-        self.Dropdown:SetPos(math.Clamp(X, 0, Flux.ScrW - W), math.Clamp(Y, 0, Flux.ScrH - H))
+        self.Dropdown:SetPos(math.Clamp(X, 0, FluxUI.ScrW - W), math.Clamp(Y, 0, FluxUI.ScrH - H))
         self.Dropdown:Open()
     end
     function SubmenuButton:OnRemove()
@@ -215,7 +213,7 @@ function Elements.DropdownSubMenu(parent, callback, ...)
     end
 
     -- Submenu Dropdown
-    local Dropdown = Elements.DropdownPanel(SubmenuButton, function() end, nil)
+    local Dropdown = FluxUI.Elements.DropdownPanel(SubmenuButton, function() end, nil)
     SubmenuButton.Dropdown = Dropdown
     function Dropdown:PerformPosition() end
     function Dropdown:Think()
@@ -244,6 +242,6 @@ function Elements.DropdownSubMenu(parent, callback, ...)
     SubmenuButton.AddSpacer = Dropdown.AddSpacer
     return SubmenuButton
 end
-function Elements.DropdownMenu(Button)
-    return Elements.DropdownPanel(Button, callback, Button ~= nil)
+function FluxUI.Elements.DropdownMenu(Button)
+    return FluxUI.Elements.DropdownPanel(Button, callback, Button ~= nil)
 end

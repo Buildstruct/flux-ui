@@ -6,9 +6,15 @@ FluxUI.ActiveElements = {}
 
 -- Resolution
 FluxUI.ScrW, FluxUI.ScrH = ScrW(), ScrH()
+FluxUI.ScreenTag = FluxUI.ScrW .. "x" .. FluxUI.ScrH
 hook.Add("OnScreenSizeChanged", "zen.fluxui.screenresolution", function()
     FluxUI.ScrW, FluxUI.ScrH = ScrW(), ScrH()
+    FluxUI.ScreenTag = FluxUI.ScrW .. "x" .. FluxUI.ScrH
     FluxUI.Print("Screen Resolution was modified, new resolution: " .. FluxUI.ScrW .. "x" .. FluxUI.ScrH)
+
+    if FluxUI.Blur.ExperimentalEnabled then
+        FluxUI.Blur.Experimental.Cached = {}
+    end
 end)
 
 -- Colors
@@ -35,6 +41,9 @@ FluxUI.Colors = {
     Blue            = Color(64, 64, 255),
     MagentaLight    = Color(255, 170, 252),
     Magenta         = Color(255, 64, 249),
+
+    -- Other
+    Transparent     = Color(0, 0, 0, 0),
 
     -- Elements
     Frame = {

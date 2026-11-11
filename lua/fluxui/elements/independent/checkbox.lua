@@ -1,4 +1,4 @@
-local Elements = Flux.Elements
+local Elements = FluxUI.Elements
 local tick = Material("icon16/tick.png")
 
 function Elements.Checkbox(parent, callback, default)
@@ -15,14 +15,14 @@ function Elements.Checkbox(parent, callback, default)
     function Checkbox:Paint(w, h)
         self.Lerp = math.Approach(self.Lerp or (self.Value and 1 or 0), self.Value and 1 or 0, RealFrameTime() * 13)
 
-        Flux.Color(Flux.Colors.ButtonBackground, 185)
-        Flux.Shapes.ShadedRect(0, 0, w, h)
-        Flux.Color(Flux.Colors.ButtonOutline)
-        Flux.Shapes.Border(0, 0, w, h, 2)
+        FluxUI.Color(FluxUI.Colors.Button.Background, 185)
+        FluxUI.Shapes.ShadedRect(0, 0, w, h)
+        FluxUI.Color(FluxUI.Colors.Button.Outline)
+        FluxUI.Shapes.Border(0, 0, w, h, 2)
 
         if self:IsHovered() then
-            Flux.RGB(255, 255, 255, input.IsMouseDown(MOUSE_FIRST) and 28 or 8)
-            Flux.Shapes.Rectangle(2, 2, w - 4, h - 4)
+            FluxUI.RGB(255, 255, 255, input.IsMouseDown(MOUSE_FIRST) and 28 or 8)
+            FluxUI.Shapes.Rectangle(2, 2, w - 4, h - 4)
         end
 
         local offset = self:IsHovered() and input.IsMouseDown(MOUSE_FIRST) and 2 or 0
@@ -33,6 +33,6 @@ function Elements.Checkbox(parent, callback, default)
 
     end
 
-    table.insert(Flux.ActiveElements, Checkbox)
+    table.insert(FluxUI.ActiveElements, Checkbox)
     return Checkbox
 end

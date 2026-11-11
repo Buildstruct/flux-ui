@@ -4,7 +4,7 @@ local function DrawArrow(hovered, w, h)
     surface.DrawTexturedRect(0, 0, w, h)
 end
 
-function FluxUI.Derma.Scrollbar(sb, wide)
+function FluxUI.Derma.Scrollbar(sb, width)
     sb = sb.GetVBar and sb:GetVBar() or sb
     sb:SetWide(width or 10)
     sb.Paint = nil

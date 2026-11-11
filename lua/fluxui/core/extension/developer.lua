@@ -12,7 +12,7 @@ function FluxUI.DeveloperInterface(toggle)
     FluxUI.Version = string.EndsWith(FluxUI.Version, ".dev") and FluxUI.Version or FluxUI.Version .. ".dev"
     FluxUI.Print("Creating the FluxUI-Debug interface")
 
-    local RTGraph, NextRTGraph, GraphHistory = {}, 0, 60
+    local RTGraph, NextRTGraph, GraphHistory = {}, 0, 100
     local Elements, TotalElements, NextElementCheck = 0, 0, 0
     hook.Add("DrawOverlay", "zen.fluxui.developerui", function()
         if gui.IsGameUIVisible() then return end
@@ -111,7 +111,7 @@ function FluxUI.DeveloperInterface(toggle)
             local v = RTGraph[k]
             local color = FluxUI.Colors.Green:Lerp(FluxUI.Colors.Red, math.Clamp((v - 10) / 30, 0, 1))
             FluxUI.Color(color, 255 * (1 - math.Clamp(k / GraphHistory, 0, 1)))
-            local x, y = graphX - (k * 2), FluxUI.ScrH - 18 - v
+            local x, y = graphX - (k), FluxUI.ScrH - 18 - v
             if lastx then surface.DrawLine(lastx, lasty, x, y) end
             lastx, lasty = x, y
             highestValue = math.max(highestValue, v)

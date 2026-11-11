@@ -2,7 +2,7 @@
 FluxUI.DrawColor = {r = 255, g = 255, b = 255, a = 255}
 FluxUI.OutlineColor = {r = 0, g = 0, b = 0, a = 255}
 
-function FluxUI.ResetColor() FluxUI.RGB(255, 255, 255, 255); FluxUI.OutlineRGB(0, 0, 0, 255) end
+function FluxUI.ResetColor() FluxUI.RGB(255, 255, 255, 255); FluxUI.RGB(0, 0, 0, 255, true) end
 function FluxUI.Alpha(alpha, outline)
     local DrawTable = (outline and outline == true) and FluxUI.OutlineColor or FluxUI.DrawColor
     DrawTable.a = alpha or 255
