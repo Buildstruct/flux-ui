@@ -22,7 +22,7 @@ function Blur.Noise(x, y, w, h, alpha)
     if not Blur.NoiseEnabled then return end
     surface.SetMaterial(FluxUI.Materials.Noise)
     surface.SetDrawColor(190, 190, 190, alpha or 28)
-    DrawTexturedUVFunc(x, y, w, h, 0, 0, w / Blur.NoiseSize, h / Blur.NoiseSize)
+    surface.DrawTexturedRectUV(x, y, w, h, 0, 0, w / Blur.NoiseSize, h / Blur.NoiseSize)
 end
 
 -- Experimental Blurring, i want this to be based off of how hyprland and niri (wm) do thier blurring. it gets the screen and drwas it at low resolutions.
