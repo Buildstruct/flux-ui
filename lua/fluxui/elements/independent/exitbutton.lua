@@ -1,4 +1,4 @@
-local Elements = Flux.Elements
+local Elements = FluxUI.Elements
 function Elements.CloseButton(parent, close)
     local CloseButton = vgui.Create("DButton", parent)
     CloseButton.Font = "Trebuchet18"
@@ -14,17 +14,17 @@ function Elements.CloseButton(parent, close)
 
     function CloseButton:Paint(w, h)
         self.Lerp = (self:IsHovered() and input.IsMouseDown(MOUSE_FIRST)) and 0.3 or math.Approach(self.Lerp or 0, self:IsHovered() and 1 or 0, RealFrameTime() * 10)
-        Flux.RGB(200, 32, 32, 64)
-        Flux.Shapes.Circle(w / 2, h / 2, h / 2 * math.ease.OutExpo(self.Lerp), 12)
-        Flux.RGB(0, 0, 0, 128)
-        Flux.Shapes.Circle(w / 2, h / 2, (h / 2 * math.ease.OutExpo(self.Lerp)) - 4, 12)
+        FluxUI.RGB(200, 32, 32, 64)
+        FluxUI.Shapes.Circle(w / 2, h / 2, h / 2 * math.ease.OutExpo(self.Lerp))
+        FluxUI.RGB(0, 0, 0, 128)
+        FluxUI.Shapes.Circle(w / 2, h / 2, (h / 2 * math.ease.OutExpo(self.Lerp)) - 4)
 
 
-        Flux.RGB(255, 100 * self.Lerp, 100 * self.Lerp, 255)
+        FluxUI.RGB(255, 100 * self.Lerp, 100 * self.Lerp, 255)
         surface.SetFont(self.Font)
-        Flux.Text.Outline(Flux.Text.Center, w / 2, h / 2 - 8, 1, "X")
+        FluxUI.Text.Outline(FluxUI.Text.Center, w / 2, h / 2 - 8, 1, "X")
     end
 
-    table.insert(Flux.ActiveElements, CloseButton)
+    table.insert(FluxUI.ActiveElements, CloseButton)
     return CloseButton
 end

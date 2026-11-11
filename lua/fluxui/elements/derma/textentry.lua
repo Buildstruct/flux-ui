@@ -1,13 +1,11 @@
-local Derma = Flux.Derma
-local Utility = Flux.Utility
-function Derma.TextEntry(parent, onEnter)
+function FluxUI.Derma.TextEntry(parent, onEnter)
     local FluxEntry = vgui.Create("DTextEntry", parent)
-    FluxEntry.Color = Flux.Colors.ButtonBackground
-    FluxEntry.OutlineColor = Flux.Colors.ButtonOutline
-    FluxEntry.TextColor = Flux.Colors.White
-    FluxEntry.HighlightColor = Flux.Colors.TextHighlightColor
-    FluxEntry.Font = Flux.Font(14, false, false)
-    FluxEntry.FontPlaceholder = Flux.Font(14, false, true)
+    FluxEntry.Color = FluxUI.Colors.Button.Background
+    FluxEntry.OutlineColor = FluxUI.Colors.Button.Outline
+    FluxEntry.TextColor = FluxUI.Colors.White
+    FluxEntry.HighlightColor = FluxUI.Colors.Blue
+    FluxEntry.Font = FluxUI.Font(14)
+    FluxEntry.FontPlaceholder = FluxUI.Font(14)
     FluxEntry.PlaceholderText = "Type here"
     FluxEntry.ContentPadding = 14
     FluxEntry.CaretPos = 0
@@ -27,7 +25,7 @@ function Derma.TextEntry(parent, onEnter)
 
     function FluxEntry:PerformLayout()
         surface.SetFont(self.Font)
-        local TextW, TextH = Flux.Text.GetTextSize(self:GetValue())
+        local TextW, TextH = FluxUI.Text.GetTextSize(self:GetValue())
         if self.DoLayout or not self.Ready then
             self:SetWide(math.max(TextW + self.ContentPadding, 60))
         end
@@ -74,15 +72,15 @@ function Derma.TextEntry(parent, onEnter)
     end
 
     function FluxEntry:Paint(w, h)
-        Flux.Blur.Panel(self)
-        Flux.Color(Utility.ConvertRainbow(self.Color))
-        Flux.Shapes.Rectangle(0, 0, w, h)
+        FluxUI.Blur.Panel(self)
+        FluxUI.Color(FluxUI.Utility.ConvertRainbow(self.Color))
+        FluxUI.Shapes.Rectangle(0, 0, w, h)
 
         local ButtonHovered = self:IsHovered()
-        Flux.Shapes.Shade(0, 0, w, h, ButtonHovered and 240 or 165)
+        FluxUI.Shapes.Shade(0, 0, w, h, ButtonHovered and 240 or 165)
 
         surface.SetFont(self.Font)
-        local CharacterSize, CharacterHeight = Flux.Text.Scale()
+        local CharacterSize, CharacterHeight = FluxUI.Text.Scale()
         local SelectedStart, SelectedEnd = self:GetSelectedTextRange()
         local TotalSelected = math.abs(SelectedEnd - SelectedStart)
 
@@ -107,11 +105,11 @@ function Derma.TextEntry(parent, onEnter)
         -- Text
         if (string.Trim(CurrentValue, " ") == "") then
             surface.SetFont(self.FontPlaceholder)
-            Flux.RGB(200, 200, 200)
-            Flux.Text.Left(5, 5, FluxEntry.PlaceholderText)
+            FluxUI.RGB(200, 200, 200)
+            FluxUI.Text.Left(5, 5, FluxEntry.PlaceholderText)
         else
-            Flux.Color(Utility.ConvertRainbow(self.TextColor))
-            Flux.Text.Left(5, 5, self:GetValue())
+            FluxUI.Color(FluxUI.Utility.ConvertRainbow(self.TextColor))
+            FluxUI.Text.Left(5, 5, self:GetValue())
         end
 
         -- Highlight and Caret
@@ -119,33 +117,33 @@ function Derma.TextEntry(parent, onEnter)
             if TotalSelected > 0 then
                 local StartRow, StartCol = self.CaretToRow(CurrentValue, math.min(SelectedStart, SelectedEnd))
                 local EndRow, EndCol = self.CaretToRow(CurrentValue, math.max(SelectedStart, SelectedEnd))
-                Flux.Color(self.HighlightColor, 64)
+                FluxUI.Color(self.HighlightColor, 64)
 
                 if StartRow ~= EndRow then
                     local LineLength = string.len(self.LineExploded[StartRow + 1] or "")
-                    Flux.Shapes.Rectangle(5 + StartCol * CharacterSize, 5 + StartRow * CharacterHeight, math.max(0, LineLength - StartCol) * CharacterSize, CharacterHeight - 3)
+                    FluxUI.Shapes.Rectangle(5 + StartCol * CharacterSize, 5 + StartRow * CharacterHeight, math.max(0, LineLength - StartCol) * CharacterSize, CharacterHeight - 3)
                     for row = StartRow + 1, EndRow - 1 do
                         local LineLen = string.len(self.LineExploded[row + 1] or "")
-                        Flux.Shapes.Rectangle(5, 5 + row * CharacterHeight, LineLen * CharacterSize, CharacterHeight - 3)
+                        FluxUI.Shapes.Rectangle(5, 5 + row * CharacterHeight, LineLen * CharacterSize, CharacterHeight - 3)
                     end
-                    Flux.Shapes.Rectangle(5, 5 + EndRow * CharacterHeight, EndCol * CharacterSize, CharacterHeight - 3)
+                    FluxUI.Shapes.Rectangle(5, 5 + EndRow * CharacterHeight, EndCol * CharacterSize, CharacterHeight - 3)
                 else
-                    Flux.Shapes.Rectangle(5 + StartCol * CharacterSize, 5 + StartRow * CharacterHeight, (EndCol - StartCol) * CharacterSize, CharacterHeight - 3)
+                    FluxUI.Shapes.Rectangle(5 + StartCol * CharacterSize, 5 + StartRow * CharacterHeight, (EndCol - StartCol) * CharacterSize, CharacterHeight - 3)
                 end
             end
 
             -- Caret
             local CursorBlink = math.abs(math.sin((0.5 + SysTime() - self.LastModified) * 3))
             local DeltaABS = math.abs(Delta)
-            Flux.RGB(255, 255, 255, CursorBlink * 255)
-            Flux.Shapes.Rectangle(5 + self.CaretPos - (DeltaABS / 2), 5 + CaretY, 1 + DeltaABS, CharacterHeight - 3)
+            FluxUI.RGB(255, 255, 255, CursorBlink * 255)
+            FluxUI.Shapes.Rectangle(5 + self.CaretPos - (DeltaABS / 2), 5 + CaretY, 1 + DeltaABS, CharacterHeight - 3)
         end
 
         -- Border bc we dont want text drawing over
-        Flux.Color(Utility.ConvertRainbow(self.OutlineColor))
-        Flux.Shapes.Border(0, 0, w, h, 3)
+        FluxUI.Color(FluxUI.Utility.ConvertRainbow(self.OutlineColor))
+        FluxUI.Shapes.Border(0, 0, w, h, 3)
     end
 
-    table.insert(Flux.ActiveElements, FluxEntry)
+    table.insert(FluxUI.ActiveElements, FluxEntry)
     return FluxEntry
 end
