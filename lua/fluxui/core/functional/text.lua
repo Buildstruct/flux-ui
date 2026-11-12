@@ -145,6 +145,7 @@ function Text.Right(x, y, ...)
 end
 
 function Text.Outline(func, x, y, stroke, ...)
+    if stroke <= 0 then return func(x, y, ...) end
     local stripped = Text.ToString(...)
     stroke = math.max(stroke, 1) or 1
     for xFlip = -stroke, stroke, 1 do
