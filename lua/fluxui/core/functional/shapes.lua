@@ -63,7 +63,7 @@ function Shapes.Border(x, y, w, h, stroke, forceNoShade)
     stroke = stroke or 1
 
     local oldDrawColor = surface.GetDrawColor()
-    multipliedStroke = stroke * 2
+    local multipliedStroke = stroke * 2
     Shapes.Rectangle(x, y, stroke, h)
     Shapes.Rectangle(x + w - stroke, y, stroke, h)
     Shapes.Rectangle(x + stroke, y, w - multipliedStroke, stroke)
