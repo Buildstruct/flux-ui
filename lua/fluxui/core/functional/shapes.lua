@@ -57,6 +57,16 @@ function Shapes.ShadedRect(x, y, w, h, ignoreAlpha)
     surface.SetDrawColor(FluxUI.DrawColor.r, FluxUI.DrawColor.g, FluxUI.DrawColor.b, FluxUI.DrawColor.a)
 end
 
+function Shapes.MultiColorShade(x, y, w, h, topColor, bottomColor, alphaMult)
+    alphaMult = alphaMult or 1
+    surface.SetDrawColor(bottomColor.r, bottomColor.g, bottomColor.b, bottomColor.a * alphaMult)
+    surface.SetMaterial(FluxUI.Materials.Gradient.Down)
+    surface.DrawTexturedRect(x, y, w, h)
+    surface.SetDrawColor(topColor.r, topColor.g, topColor.b, topColor.a * alphaMult)
+    surface.SetMaterial(FluxUI.Materials.Gradient.Up)
+    surface.DrawTexturedRect(x, y, w, h)
+    surface.SetDrawColor(FluxUI.DrawColor.r, FluxUI.DrawColor.g, FluxUI.DrawColor.b, FluxUI.DrawColor.a)
+end
 -- Borders
 function Shapes.Border(x, y, w, h, stroke, forceNoShade)
     if forceNoShade or not Shapes.BordersShaded then return surface.DrawOutlinedRect(x, y, w, h, stroke) end
